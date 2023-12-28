@@ -1,7 +1,7 @@
 import { lucia } from "lucia";
 import { prisma } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
-import { env } from "../../env";
+import { env } from "@/env";
 import { nextjs_future } from "lucia/middleware";
 import * as context from "next/headers";
 import { cache } from "react";
@@ -9,7 +9,7 @@ import { cache } from "react";
 const client = new PrismaClient();
 
 // default values
-const auth = lucia({
+export const auth = lucia({
   adapter: prisma(client, {
     user: "user", // model User {}
     key: "key", // model Key {}
@@ -17,7 +17,7 @@ const auth = lucia({
   }),
   env: env.NODE_ENV === "development" ? "DEV" : "PROD",
   middleware: nextjs_future(),
-  sessionCookie: { expires: false },
+  sessionCookie: { expires: false, name: "__session" },
   getUserAttributes: (data) => {
     return data;
   },

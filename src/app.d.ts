@@ -17,8 +17,8 @@ declare global {
     type DatabaseUserAttributes = {
       username: string;
       email: string;
-      avatar_url: string;
-      avatar_media_type: AvatarMediaType;
+      avatarUrl: string;
+      avatarMediaType: AvatarMediaType;
     };
     type DatabaseSessionAttributes = Record<string, never>;
   }

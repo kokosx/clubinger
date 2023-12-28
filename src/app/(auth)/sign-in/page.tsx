@@ -71,7 +71,7 @@ const page = () => {
         <InputError error={errors.password?.message} />
       </InputField>
 
-      <LoadingButton loading={signin.isLoading}>Zarejestruj się</LoadingButton>
+      <LoadingButton loading={signin.isLoading}>Zaloguj się</LoadingButton>
       <InputError error={error} />
       <Link className={cn(buttonVariants({ variant: "link" }))} href="/sign-up">
         Nie masz konta? Zarejestruj się

@@ -19,7 +19,6 @@ export const authRouter = createTRPCRouter({
         attributes: {
           username: input.username,
           email: input.email.toLowerCase(),
-
           avatarMediaType: "DICEBEAR",
           avatarUrl: crypto.randomBytes(12).toString("hex"),
         },

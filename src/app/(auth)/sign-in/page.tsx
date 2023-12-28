@@ -12,6 +12,9 @@ import InputError from "@/components/InputError";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
 const page = () => {
   const router = useRouter();
@@ -70,6 +73,9 @@ const page = () => {
 
       <LoadingButton loading={signin.isLoading}>Zarejestruj się</LoadingButton>
       <InputError error={error} />
+      <Link className={cn(buttonVariants({ variant: "link" }))} href="/sign-up">
+        Nie masz konta? Zarejestruj się
+      </Link>
     </form>
   );
 };

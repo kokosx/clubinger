@@ -31,7 +31,7 @@ const page = () => {
     },
     onMutate: () => setError(false),
     onSuccess: () => {
-      toast("Pomyślnie utworzono konto. Zaraz nastąpi przekierowanie");
+      toast("Pomyślnie zalogowano. Zaraz nastąpi przekierowanie");
       router.push("/app");
     },
   });

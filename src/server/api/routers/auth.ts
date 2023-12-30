@@ -32,7 +32,6 @@ export const authRouter = createTRPCRouter({
           });
         }
       }
-      console.log(e);
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
     }
     try {
@@ -62,7 +61,7 @@ export const authRouter = createTRPCRouter({
 
     authRequest.setSession(session);
 
-    return { success: true };
+    return { success: true, message: "Udało się" };
   }),
   signin: publicProcedure.input(signinSchema).mutation(async ({ input }) => {
     try {

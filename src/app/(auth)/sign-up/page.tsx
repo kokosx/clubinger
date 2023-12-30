@@ -32,9 +32,10 @@ const page = () => {
     onMutate: () => setError(false),
     onSuccess: () => {
       toast("Pomyślnie utworzono konto. Zaraz nastąpi przekierowanie");
-      router.push("/app");
+      router.push("/app?newuser=true");
     },
   });
+
   const {
     register,
     handleSubmit,

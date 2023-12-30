@@ -6,11 +6,13 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
-import { ZodError } from "zod";
+import { ZodError, z } from "zod";
 
 import { db } from "@/server/db";
+import { cookies } from "next/headers";
+import { auth } from "../../lib/auth/auth";
 
 /**
  * 1. CONTEXT
@@ -74,3 +76,48 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+const middleware = t.middleware;
+
+const isAuthenticated = middleware(async (opts) => {
+  const sessionId = cookies().get("__session")?.value;
+  if (!sessionId) {
+    throw new TRPCError({ code: "FORBIDDEN" });
+  }
+
+  const s = await auth.validateSession(sessionId);
+
+  if (!s) {
+    throw new TRPCError({ code: "FORBIDDEN" });
+  }
+
+  return opts.next({ ctx: { user: s.user } });
+});
+
+// const authorizeClubAttendee = isAuthenticated.unstable_pipe(async (opts) => {
+//   const { clubId }: { clubId: number } = opts.rawInput as unknown as any;
+
+//   const validated = await z.number().safeParseAsync(clubId);
+//   if (!validated.success) {
+//     console.log(validated.error);
+//     throw new TRPCError({
+//       code: "BAD_REQUEST",
+//       message: "Club id not provided",
+//     });
+//   }
+
+//   const a = await clubService.isClubAttendedByUser(
+//     validated.data,
+//     opts.ctx.user.id
+//   );
+
+//   if (!a) {
+//     throw new TRPCError({ code: "FORBIDDEN", message: "Club id is wrong" });
+//   }
+
+//   return opts.next();
+// });
+
+export const authenticatedProcedure = publicProcedure.use(isAuthenticated);
+// export const attendingUserProcedure = authenticatedProcedure.use(
+//   authorizeClubAttendee
+// );

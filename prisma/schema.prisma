@@ -2,24 +2,58 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String          @id @unique
+  email           String
+  username        String
+  avatarMediaType AvatarMediaType @default(DICEBEAR)
+  avatarUrl       String
+
+  likedBookGenres UsersLikedBookGenre[]
+  likedMusicGenres UsersLikedMusicGenre[]
+  auth_session Session[]
+  key          Key[]
+}
+
+model UsersLikedBookGenre {
+  userId String
+  user User @relation(references: [id],fields: [userId],onDelete: Cascade,onUpdate: Cascade)
+  bookGenreId Int
+  bookGenre BookGenre @relation(references: [id],fields: [bookGenreId],onDelete: Cascade,onUpdate: Cascade)
+
+  @@id([userId,bookGenreId])
+}
+
+model UsersLikedMusicGenre {
+  userId String
+  user User @relation(references: [id],fields: [userId],onDelete: Cascade,onUpdate: Cascade)
+  musicGenreId Int
+  bookGenre MusicGenre @relation(references: [id],fields: [musicGenreId],onDelete: Cascade,onUpdate: Cascade)
+
+  @@id([userId,musicGenreId])
 }
 
 
-model User {
-  id           String    @id @unique
-    email String 
-    username String
-    avatarMediaType AvatarMediaType @default(DICEBEAR)
-    avatarUrl String 
+model BookGenre {
+  id Int @id @default(autoincrement() )
+  name String
 
-  auth_session Session[]
-  key          Key[]
+  likedByUsers UsersLikedBookGenre[]
+}
+
+model MusicGenre {
+  id Int @id @default(autoincrement() )
+  name String
+
+  likedByUsers UsersLikedMusicGenre[]
 }
 
 model Session {

@@ -16,7 +16,9 @@ model User {
   username        String
   avatarMediaType AvatarMediaType @default(DICEBEAR)
   avatarUrl       String
+  participatantAt ClubParticipant[]
 
+  createdClubs Club[] @relation("created-club")
   likedBookGenres UsersLikedBookGenre[]
   likedMusicGenres UsersLikedMusicGenre[]
   auth_session Session[]
@@ -54,6 +56,28 @@ model MusicGenre {
   name String
 
   likedByUsers UsersLikedMusicGenre[]
+}
+
+model Club {
+  id Int @id @default(autoincrement())
+  name String
+  description String @default("")
+  user User @relation(fields: [createdBy],references: [id],name: "created-club")
+  createdBy String
+
+  participants ClubParticipant[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ClubParticipant {
+  clubId Int
+  userId String
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+  club Club @relation(fields: [clubId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+
+  @@id([userId,clubId])
 }
 
 model Session {

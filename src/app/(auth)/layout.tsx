@@ -1,14 +1,10 @@
-import type { ReactNode } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/utils";
 import Image from "next/image";
 
-type Props = {
-  children: ReactNode;
-};
-
-const AuthLayout = async ({ children }: Props) => {
+const AuthLayout = async ({ children }: PropsWithChildren) => {
   const session = await getSession();
 
   if (session) redirect("/app");

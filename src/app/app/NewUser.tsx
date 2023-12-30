@@ -19,7 +19,7 @@ const NewUser = () => {
   const [chosenMusicGenres, setChosenMusicGenres] = useState<string[]>([]);
   const [chosenBookGenres, setChosenBookGenres] = useState<string[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(true);
-  const genres = api.genre.getAllGenres.useQuery(undefined);
+  const genres = api.genre.getAllGenres.useQuery();
   const replacePreferences = api.user.replacePreferences.useMutation({
     onError: () => {
       toast("Nie udało się zapisać");

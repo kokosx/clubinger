@@ -14,6 +14,7 @@ import { api } from "@/trpc/react";
 import GenreChooser from "@/components/GenreChooser";
 import { toast } from "sonner";
 import { convertToSnakeCase } from "../../lib/format";
+import Loading from "@/components/Loading";
 
 const NewUser = () => {
   const [chosenMusicGenres, setChosenMusicGenres] = useState<string[]>([]);
@@ -61,7 +62,9 @@ const NewUser = () => {
 
           <div className="px-4">
             {genres.isLoading ? (
-              <>Loading</>
+              <div className="h-12] flex w-full items-center justify-center">
+                <Loading className="h-12 w-12" />
+              </div>
             ) : (
               <>
                 <GenreChooser

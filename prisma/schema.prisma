@@ -38,7 +38,7 @@ model UsersLikedMusicGenre {
   userId String
   user User @relation(references: [id],fields: [userId],onDelete: Cascade,onUpdate: Cascade)
   musicGenreId Int
-  bookGenre MusicGenre @relation(references: [id],fields: [musicGenreId],onDelete: Cascade,onUpdate: Cascade)
+  musicGenre MusicGenre @relation(references: [id],fields: [musicGenreId],onDelete: Cascade,onUpdate: Cascade)
 
   @@id([userId,musicGenreId])
 }
@@ -48,6 +48,7 @@ model BookGenre {
   id Int @id @default(autoincrement() )
   name String
 
+  linkedClubs ClubsLinkedBookGenre[]
   likedByUsers UsersLikedBookGenre[]
 }
 
@@ -55,6 +56,7 @@ model MusicGenre {
   id Int @id @default(autoincrement() )
   name String
 
+  linkedClubs ClubsLinkedMusicGenre[]
   likedByUsers UsersLikedMusicGenre[]
 }
 
@@ -66,6 +68,8 @@ model Club {
   createdBy String
 
   participants ClubParticipant[]
+  linkedMusicGenres ClubsLinkedMusicGenre[]
+  linkedBookGenres ClubsLinkedBookGenre[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -77,7 +81,27 @@ model ClubParticipant {
   user User @relation(fields: [userId],references: [id],onDelete: Cascade,onUpdate: Cascade)
   club Club @relation(fields: [clubId],references: [id],onDelete: Cascade,onUpdate: Cascade)
 
+  createdAt DateTime @default(now())
+
   @@id([userId,clubId])
+}
+
+model ClubsLinkedBookGenre {
+  clubId Int
+  club Club @relation(references: [id],fields: [clubId],onDelete: Cascade,onUpdate: Cascade)
+  bookGenreId Int
+  bookGenre BookGenre @relation(references: [id],fields: [bookGenreId],onDelete: Cascade,onUpdate: Cascade)
+
+  @@id([clubId,bookGenreId])
+}
+
+model ClubsLinkedMusicGenre {
+  clubId Int
+  club Club @relation(references: [id],fields: [clubId],onDelete: Cascade,onUpdate: Cascade)
+  musicGenreId Int
+  musicGenre MusicGenre @relation(references: [id],fields: [musicGenreId],onDelete: Cascade,onUpdate: Cascade)
+
+  @@id([clubId,musicGenreId])
 }
 
 model Session {

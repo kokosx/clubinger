@@ -71,6 +71,7 @@ export default function GenreInput({
             onWheel={(e) => {
               e.stopPropagation();
             }}
+            onTouchMove={(e) => e.stopPropagation()}
             className="scroll pointer-events-auto h-72 overflow-y-scroll will-change-scroll"
           >
             <CommandInput placeholder="Wyszukaj" className="h-9" />

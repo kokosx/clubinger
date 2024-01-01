@@ -52,7 +52,7 @@ const NewUser = () => {
   return (
     <Drawer open={drawerOpen} onClose={onCloseDrawer}>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
+        <div className="mx-auto w-full max-w-sm overflow-y-scroll">
           <DrawerHeader>
             <DrawerTitle>Dodaj swoje preferencje</DrawerTitle>
             <DrawerDescription>

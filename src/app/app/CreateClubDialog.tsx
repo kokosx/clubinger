@@ -1,0 +1,134 @@
+import { useState, ReactNode } from "react";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import GenreChooser from "@/components/GenreChooser";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import Loading from "@/components/Loading";
+import InputField from "@/components/InputField";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import InputError from "@/components/InputError";
+import { useForm } from "react-hook-form";
+import { api } from "@/trpc/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addClubFormSchema } from "@/schemas/club";
+import { convertToSnakeCase } from "@/lib/format";
+import { useRouter } from "next/navigation";
+import { LoadingButton } from "@/components/LoadingButton";
+import { toast } from "sonner";
+
+type Props = {
+  children: ReactNode;
+};
+
+const CreateClubDialog = ({ children }: Props) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<typeof addClubFormSchema._output>({
+    resolver: zodResolver(addClubFormSchema),
+  });
+  const router = useRouter();
+
+  const [error, setError] = useState<false | string>(false);
+
+  const genres = api.genre.getAllGenres.useQuery();
+  const createClub = api.club.createClub.useMutation({
+    onError(error) {
+      setError("Wystąpił nieznany błąd " + error.data?.code);
+    },
+    onSuccess({ club }) {
+      router.push(`/app/club/${club.id}`);
+      toast("Utworzono klub!");
+    },
+  });
+
+  const [chosenBookGenres, setChosenBookGenres] = useState<string[]>([]);
+  const [chosenMusicGenres, setChosenMusicGenres] = useState<string[]>([]);
+
+  const onSubmit = handleSubmit(({ name }) => {
+    const chosenMusicGenresIds = genres
+      .data!.musicGenres.filter((v) =>
+        chosenMusicGenres.includes(convertToSnakeCase(v.name)),
+      )
+      .map((v) => v.id);
+    const chosenBookGenresIds = genres
+      .data!.bookGenres.filter((v) =>
+        chosenBookGenres.includes(convertToSnakeCase(v.name)),
+      )
+      .map((v) => v.id);
+
+    createClub.mutate({
+      name,
+      bookGenresIds: chosenBookGenresIds,
+      musicGenresIds: chosenMusicGenresIds,
+    });
+  });
+
+  return (
+    <Drawer>
+      {children}
+      <DrawerContent>
+        <div className="my-8px mx-auto w-full  max-w-sm overflow-y-scroll">
+          <DrawerHeader>
+            <DrawerTitle>Utwórz nowy klub</DrawerTitle>
+            <DrawerDescription>
+              Na ich podstawie będą polecane tobie kluby
+            </DrawerDescription>
+          </DrawerHeader>
+
+          <div className="px-4">
+            <InputField>
+              <Label className="text-xl">Nazwa klubu</Label>
+              <Input {...register("name")} />
+              <InputError error={errors.name?.message} />
+            </InputField>
+            {genres.isLoading ? (
+              <div className="mx-auto my-auto">
+                <Loading className="h-12 w-12" />
+              </div>
+            ) : (
+              <>
+                <GenreChooser
+                  allGenres={genres.data!.musicGenres}
+                  chosenGenres={chosenMusicGenres}
+                  maxLength={5}
+                  setChosenGenres={setChosenMusicGenres}
+                  title="Gatunki muzyki"
+                />
+                <GenreChooser
+                  allGenres={genres.data!.bookGenres}
+                  chosenGenres={chosenBookGenres}
+                  maxLength={5}
+                  setChosenGenres={setChosenBookGenres}
+                  title="Gatunki książek"
+                />
+              </>
+            )}
+          </div>
+          <InputError error={error} />
+
+          <DrawerFooter>
+            <LoadingButton loading={createClub.isLoading} onClick={onSubmit}>
+              Utwórz
+            </LoadingButton>
+            <DrawerClose className={cn(buttonVariants({ variant: "outline" }))}>
+              Zamknij
+            </DrawerClose>
+          </DrawerFooter>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+};
+
+export default CreateClubDialog;

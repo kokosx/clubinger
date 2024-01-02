@@ -4,24 +4,16 @@ import { Session } from "lucia";
 import Image from "next/image";
 import Link from "next/link";
 import UserAvatar from "@/components/UserAvatar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../../components/ui/popover";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "../../components/ui/button";
-import { CaretSortIcon } from "@radix-ui/react-icons";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
 import { Club } from "@prisma/client";
-import { CheckIcon, PlusIcon } from "lucide-react";
-import { cn } from "../../lib/utils";
+import { ChevronDownIcon, PlusIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +26,8 @@ import {
 
 import CreateClubDialog from "./CreateClubDialog";
 import { DrawerTrigger } from "../../components/ui/drawer";
+import { useParams, usePathname } from "next/navigation";
+import ClubAvatar from "@/components/ClubAvatar";
 
 type Props = {
   session: Session;
@@ -41,13 +35,35 @@ type Props = {
 };
 
 const Navbar = ({ session, clubs }: Props) => {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<null | number>(null);
+  const [isNewClubVisible, setIsNewClubVisible] = useState(false);
+  const { clubId }: { clubId: string } = useParams();
 
-  const [newClubOpen, setNewClubOpen] = useState(false);
+  const getCurrentClubName = () => {
+    if (!clubId) {
+      return "Ekran główny";
+    }
+    let foundClub: Club | null = null;
+    for (let v of clubs) {
+      if (v.id === Number(clubId)) {
+        foundClub = v;
+        break;
+      }
+    }
+
+    if (!foundClub) {
+      return "Ekran główny";
+    }
+    return foundClub.name;
+  };
+
+  useEffect(() => {
+    setCurrentClubName(getCurrentClubName());
+  }, [clubId, clubs]);
+
+  const [currentClubName, setCurrentClubName] = useState(getCurrentClubName());
 
   return (
-    <nav className="flex gap-x-2">
+    <nav className="mb-2 flex gap-x-2">
       <Link href="/app">
         <h1 className="hidden text-2xl font-semibold md:block md:text-4xl">
           KultKlub
@@ -60,60 +76,33 @@ const Navbar = ({ session, clubs }: Props) => {
           height={50}
         />
       </Link>
-      <div className="my-auto">
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className="w-[200px] justify-between"
-            >
-              {value
-                ? clubs.find((club) => club.id === value)?.name
-                : "Select framework..."}
-              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+      <div className="flex items-center gap-x-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              <p className="w-16 truncate text-start md:w-24">
+                {currentClubName}
+              </p>
+              <ChevronDownIcon className="ml-1" />
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[200px] p-0">
-            <Command>
-              <CommandInput placeholder="Wyszukaj klub..." className="h-9" />
-              <CommandEmpty>Nie znaleziono.</CommandEmpty>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="max-h-72 overflow-y-scroll">
+            <DropdownMenuLabel>Twoje kluby</DropdownMenuLabel>
+            <DropdownMenuSeparator />
 
-              <CommandGroup>
-                {clubs.map((club) => (
-                  <CommandItem
-                    key={club.id}
-                    value={String(club.id)}
-                    onSelect={(currentValue) => {
-                      setValue(
-                        currentValue === String(value)
-                          ? null
-                          : Number(currentValue),
-                      );
-                      setOpen(false);
-                    }}
-                  >
-                    {club.name}
-                    <CheckIcon
-                      className={cn(
-                        "ml-auto h-4 w-4",
-                        value === club.id ? "opacity-100" : "opacity-0",
-                      )}
-                    />
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </div>
-      <div>
-        <CreateClubDialog>
+            <DropdownMenuGroup>
+              {clubs.map((v) => (
+                <ListClubItem club={v} key={v.id} />
+              ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <CreateClubDialog visible={isNewClubVisible}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
-                <PlusIcon />
+                <PlusIcon className="my-auto" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
@@ -124,7 +113,7 @@ const Navbar = ({ session, clubs }: Props) => {
                   <DropdownMenuItem>Odkryj kluby</DropdownMenuItem>
                 </Link>
                 <DrawerTrigger asChild>
-                  <DropdownMenuItem onClick={() => setNewClubOpen(true)}>
+                  <DropdownMenuItem onClick={() => setIsNewClubVisible(true)}>
                     Utwórz klub
                   </DropdownMenuItem>
                 </DrawerTrigger>
@@ -139,10 +128,39 @@ const Navbar = ({ session, clubs }: Props) => {
           avatarUrl={session.user.avatarUrl}
           mediaType={session.user.avatarMediaType}
         />
-        <p>{session.user.username}</p>
+        <p className="hidden md:block">{session.user.username}</p>
       </div>
     </nav>
   );
 };
 
 export default Navbar;
+
+type ListClubItemProps = {
+  club: Club;
+};
+
+const ListClubItem = ({ club }: ListClubItemProps) => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Link href={`/app/club/${club.id}`} key={club.id}>
+            <DropdownMenuItem className="cursor-pointer">
+              <TooltipTrigger asChild>
+                <div className="flex gap-x-2">
+                  <ClubAvatar size={25} avatarUrl={club.avatarUrl} />
+                  <p className="w-20 truncate">{club.name}</p>
+                </div>
+              </TooltipTrigger>
+            </DropdownMenuItem>
+          </Link>
+        </TooltipTrigger>
+
+        <TooltipContent>
+          <p>{club.name}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};

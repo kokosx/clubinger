@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import Navbar from "./Navbar";
 import { db } from "@/server/db";
 
+export const revalidate = true;
+
 type Props = PropsWithChildren & {};
 
 const layout = async ({ children }: Props) => {
@@ -15,8 +17,6 @@ const layout = async ({ children }: Props) => {
     orderBy: { createdAt: "desc" },
     select: { club: true },
   });
-
-  const a = attendedClubs.flat();
 
   return (
     <div className="container mx-auto  p-2 ">

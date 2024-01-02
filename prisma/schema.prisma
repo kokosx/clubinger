@@ -66,6 +66,8 @@ model Club {
   description String @default("")
   user User @relation(fields: [createdBy],references: [id],name: "created-club")
   createdBy String
+  avatarUrl String
+  avatarMediaType AvatarMediaType @default(DICEBEAR)
 
   participants ClubParticipant[]
   linkedMusicGenres ClubsLinkedMusicGenre[]

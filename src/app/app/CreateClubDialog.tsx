@@ -1,4 +1,4 @@
-import { useState, ReactNode } from "react";
+import { useState, ReactNode, useEffect } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -24,24 +24,30 @@ import { convertToSnakeCase } from "@/lib/format";
 import { useRouter } from "next/navigation";
 import { LoadingButton } from "@/components/LoadingButton";
 import { toast } from "sonner";
+import { revalidatePathAction } from "../../actions/revalidatePathAction";
 
 type Props = {
   children: ReactNode;
+  visible: boolean;
 };
 
-const CreateClubDialog = ({ children }: Props) => {
+const CreateClubDialog = ({ children, visible }: Props) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<typeof addClubFormSchema._output>({
     resolver: zodResolver(addClubFormSchema),
   });
   const router = useRouter();
-
+  const genres = api.genre.getAllGenres.useQuery(undefined, { enabled: false });
   const [error, setError] = useState<false | string>(false);
 
-  const genres = api.genre.getAllGenres.useQuery();
+  useEffect(() => {
+    if (visible) genres.refetch();
+  }, [visible]);
+
   const createClub = api.club.createClub.useMutation({
     onError(error) {
       setError("Wystąpił nieznany błąd " + error.data?.code);
@@ -49,6 +55,9 @@ const CreateClubDialog = ({ children }: Props) => {
     onSuccess({ club }) {
       router.push(`/app/club/${club.id}`);
       toast("Utworzono klub!");
+      //@ts-expect-error Close the drawer after navigation
+      document.querySelector("#drawer-close")!.click();
+      revalidatePathAction("/app", "layout");
     },
   });
 
@@ -75,7 +84,13 @@ const CreateClubDialog = ({ children }: Props) => {
   });
 
   return (
-    <Drawer>
+    <Drawer
+      onOpenChange={() => {
+        reset();
+        setChosenBookGenres([]);
+        setChosenMusicGenres([]);
+      }}
+    >
       {children}
       <DrawerContent>
         <div className="my-8px mx-auto w-full  max-w-sm overflow-y-scroll">
@@ -93,7 +108,7 @@ const CreateClubDialog = ({ children }: Props) => {
               <InputError error={errors.name?.message} />
             </InputField>
             {genres.isLoading ? (
-              <div className="mx-auto my-auto">
+              <div className="flex w-full items-center justify-center">
                 <Loading className="h-12 w-12" />
               </div>
             ) : (
@@ -121,7 +136,10 @@ const CreateClubDialog = ({ children }: Props) => {
             <LoadingButton loading={createClub.isLoading} onClick={onSubmit}>
               Utwórz
             </LoadingButton>
-            <DrawerClose className={cn(buttonVariants({ variant: "outline" }))}>
+            <DrawerClose
+              id="drawer-close"
+              className={cn(buttonVariants({ variant: "outline" }))}
+            >
               Zamknij
             </DrawerClose>
           </DrawerFooter>

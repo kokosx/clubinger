@@ -1,5 +1,6 @@
 import { authenticatedProcedure, createTRPCRouter } from "@/server/api/trpc";
 import { addClubSchema } from "@/schemas/club";
+import crypto from "node:crypto";
 
 export const clubRouter = createTRPCRouter({
   createClub: authenticatedProcedure
@@ -24,6 +25,8 @@ export const clubRouter = createTRPCRouter({
               userId: ctx.user.id,
             },
           },
+          avatarMediaType: "DICEBEAR",
+          avatarUrl: crypto.randomBytes(16).toString("hex"),
         },
       });
 

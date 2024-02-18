@@ -23,7 +23,7 @@
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 72.2% 50.6%;
-    --radius: 1rem;
+    --radius: 0.75rem;
   }
 
   .dark {
@@ -56,4 +56,8 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.tiptap h1 {
+  @apply scroll-m-20 text-xl font-extrabold tracking-tight lg:text-xl;
 }

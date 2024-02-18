@@ -21,7 +21,7 @@ import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addClubFormSchema } from "@/schemas/club";
 import { convertToSnakeCase } from "@/lib/format";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { LoadingButton } from "@/components/LoadingButton";
 import { toast } from "sonner";
 import { revalidatePathAction } from "../../actions/revalidatePathAction";
@@ -53,7 +53,7 @@ const CreateClubDialog = ({ children, visible }: Props) => {
       setError("Wystąpił nieznany błąd " + error.data?.code);
     },
     onSuccess({ club }) {
-      router.push(`/app/club/${club.id}`);
+      router.push(`/app/club/${club.id}?justCreated=true`);
       toast("Utworzono klub!");
       //@ts-expect-error Close the drawer after navigation
       document.querySelector("#drawer-close")!.click();

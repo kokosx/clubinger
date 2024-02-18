@@ -26,7 +26,7 @@ import {
 
 import CreateClubDialog from "./CreateClubDialog";
 import { DrawerTrigger } from "../../components/ui/drawer";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import ClubAvatar from "@/components/ClubAvatar";
 
 type Props = {
@@ -36,15 +36,16 @@ type Props = {
 
 const Navbar = ({ session, clubs }: Props) => {
   const [isNewClubVisible, setIsNewClubVisible] = useState(false);
-  const { clubId }: { clubId: string } = useParams();
+  const params = useParams<{ clubId: string }>();
+  const searchParams = useSearchParams();
 
   const getCurrentClubName = () => {
-    if (!clubId) {
+    if (!params.clubId) {
       return "Ekran główny";
     }
     let foundClub: Club | null = null;
     for (let v of clubs) {
-      if (v.id === Number(clubId)) {
+      if (v.id === Number(params.clubId)) {
         foundClub = v;
         break;
       }
@@ -58,7 +59,7 @@ const Navbar = ({ session, clubs }: Props) => {
 
   useEffect(() => {
     setCurrentClubName(getCurrentClubName());
-  }, [clubId, clubs]);
+  }, [params, clubs, searchParams]);
 
   const [currentClubName, setCurrentClubName] = useState(getCurrentClubName());
 

@@ -93,31 +93,33 @@ const isAuthenticated = middleware(async (opts) => {
   return opts.next({ ctx: { user: s.user } });
 });
 
-// const authorizeClubAttendee = isAuthenticated.unstable_pipe(async (opts) => {
-//   const { clubId }: { clubId: number } = opts.rawInput as unknown as any;
+const authorizeClubAttendee = isAuthenticated.unstable_pipe(async (opts) => {
+  const { clubId }: { clubId: number } = opts.rawInput as unknown as any;
 
-//   const validated = await z.number().safeParseAsync(clubId);
-//   if (!validated.success) {
-//     console.log(validated.error);
-//     throw new TRPCError({
-//       code: "BAD_REQUEST",
-//       message: "Club id not provided",
-//     });
-//   }
+  const validated = await z.number().safeParseAsync(clubId);
+  if (!validated.success) {
+    console.log(validated.error);
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Club id not provided",
+    });
+  }
 
-//   const a = await clubService.isClubAttendedByUser(
-//     validated.data,
-//     opts.ctx.user.id
-//   );
+  const a = await opts.ctx.db.clubParticipant.findFirst({
+    where: {
+      clubId: clubId,
+      userId: opts.ctx.user.id,
+    },
+  });
 
-//   if (!a) {
-//     throw new TRPCError({ code: "FORBIDDEN", message: "Club id is wrong" });
-//   }
+  if (!a) {
+    throw new TRPCError({ code: "FORBIDDEN", message: "Club id is wrong" });
+  }
 
-//   return opts.next();
-// });
+  return opts.next({ ctx: { clubId: a.clubId } });
+});
 
 export const authenticatedProcedure = publicProcedure.use(isAuthenticated);
-// export const attendingUserProcedure = authenticatedProcedure.use(
-//   authorizeClubAttendee
-// );
+export const attendingUserProcedure = authenticatedProcedure.use(
+  authorizeClubAttendee,
+);

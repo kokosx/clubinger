@@ -20,6 +20,7 @@ model User {
 
   createdClubs Club[] @relation("created-club")
   createdPosts Post[]
+  liked PostLike[]
   likedBookGenres UsersLikedBookGenre[]
   likedMusicGenres UsersLikedMusicGenre[]
   auth_session Session[]
@@ -88,9 +89,21 @@ model Post {
   createdBy String
   club Club @relation(fields: [clubId],references: [id],onDelete: Cascade,onUpdate: Cascade)
   clubId Int
+  likes PostLike[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model PostLike {
+  post Post @relation(fields: [postId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+  postId Int
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+
+  @@id([postId,userId])
 }
 
 model ClubParticipant {

@@ -1,3 +1,4 @@
+import { getSession } from "../../../../lib/auth/utils";
 import { db } from "../../../../server/db";
 import AddPostCard from "./AddPostCard";
 import PostCard from "./PostCard";
@@ -9,6 +10,8 @@ type Props = {
 };
 
 const page = async ({ params }: Props) => {
+  const session = await getSession();
+
   const posts = await db.post.findMany({
     where: { clubId: Number(params.clubId) },
     include: {
@@ -20,6 +23,8 @@ const page = async ({ params }: Props) => {
           avatarUrl: true,
         },
       },
+      likes: { where: { userId: session!.user.id } },
+      _count: { select: { likes: true } },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -29,7 +34,7 @@ const page = async ({ params }: Props) => {
       <AddPostCard clubId={params.clubId} />
 
       {posts.map((post) => (
-        <PostCard post={post} />
+        <PostCard key={post.id} clubId={Number(params.clubId)} post={post} />
       ))}
     </div>
   );

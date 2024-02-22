@@ -7,3 +7,8 @@ export const addPostSchema = z.object({
   description: z.string().max(MAX_DESCRIPTION_LENGTH).default(""),
   clubId: z.number(),
 });
+
+export const likePostSchema = z.object({
+  postId: z.number(),
+  clubId: z.number(),
+});

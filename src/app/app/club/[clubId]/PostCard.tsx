@@ -12,7 +12,6 @@ import { type User, type Post, PostLike } from "@prisma/client";
 import UserAvatar from "../../../../components/UserAvatar";
 import { useRouter } from "next/navigation";
 import CommentButton from "../../../../components/CommentButton";
-import Link from "next/link";
 import LikeButton from "../../../../components/LikeButton";
 
 type Props = {
@@ -22,6 +21,7 @@ type Props = {
   } & {
     _count: {
       likes: number;
+      comments: number;
     };
   };
   clubId: number;
@@ -70,7 +70,7 @@ const PostCard = ({ post, clubId }: Props) => {
             initialLikeAmount={post._count.likes}
             postId={post.id}
           />
-          <CommentButton commentAmount={0} />
+          <CommentButton commentAmount={post._count.comments} />
         </div>
       </CardContent>
     </Card>

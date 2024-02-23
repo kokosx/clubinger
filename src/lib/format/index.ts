@@ -18,3 +18,7 @@ export function convertToSnakeCase(str: string) {
 
   return str.replaceAll(" ", "_").replace(/(^_*|_*$)/g, "");
 }
+
+export function formatNumber(n: number) {
+  return Intl.NumberFormat("en-EN", { notation: "compact" }).format(n);
+}

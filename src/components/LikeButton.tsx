@@ -4,6 +4,7 @@ import React, { MouseEvent, useState } from "react";
 import { Button } from "./ui/button";
 import { ArrowBigUp } from "lucide-react";
 import { api } from "../trpc/react";
+import { formatNumber } from "../lib/format";
 
 type Props = {
   initialLikeAmount: number;
@@ -65,10 +66,10 @@ const LikeButton = ({
       onClick={changeLikeStatus}
       disabled={isDisabled}
       variant={isLiked ? "default" : "outline"}
-      size={"icon"}
+      className="w-16"
     >
       <ArrowBigUp />
-      <span>{getLikeAmount()}</span>
+      <span>{formatNumber(getLikeAmount())}</span>
     </Button>
   );
 };

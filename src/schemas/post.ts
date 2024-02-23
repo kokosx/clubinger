@@ -12,3 +12,8 @@ export const likePostSchema = z.object({
   postId: z.number(),
   clubId: z.number(),
 });
+
+export const getPostSchema = z.object({
+  clubId: z.number(),
+  postId: z.number(),
+});

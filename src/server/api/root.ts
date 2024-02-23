@@ -4,6 +4,7 @@ import { genresRouter } from "./routers/genres";
 import { userRouter } from "./routers/user";
 import { clubRouter } from "./routers/club";
 import { postRouter } from "./routers/post";
+import { inferRouterOutputs } from "@trpc/server";
 
 /**
  * This is the primary router for your server.
@@ -20,3 +21,5 @@ export const appRouter = createTRPCRouter({
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
+export type RouterOutputs = inferRouterOutputs<AppRouter>;
+export type PostOutputs = RouterOutputs["post"];

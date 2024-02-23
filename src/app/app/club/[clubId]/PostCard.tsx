@@ -7,23 +7,16 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../../../components/ui/card";
-import { type User, type Post, PostLike } from "@prisma/client";
-import UserAvatar from "../../../../components/UserAvatar";
+} from "@/components/ui/card";
+import UserAvatar from "@/components/UserAvatar";
 import { useRouter } from "next/navigation";
-import CommentButton from "../../../../components/CommentButton";
-import LikeButton from "../../../../components/LikeButton";
+import CommentButton from "@/components/CommentButton";
+import LikeButton from "@/components/LikeButton";
+import { PostOutputs } from "@/server/api/root";
+import DOMPurify from "isomorphic-dompurify";
 
 type Props = {
-  post: Post & {
-    user: Omit<User, "email">;
-    likes: PostLike[];
-  } & {
-    _count: {
-      likes: number;
-      comments: number;
-    };
-  };
+  post: PostOutputs["getPost"];
   clubId: number;
 };
 
@@ -56,12 +49,14 @@ const PostCard = ({ post, clubId }: Props) => {
             />
           </button>
         </CardDescription>
-        <CardTitle className=" text-3xl">{post.title}</CardTitle>
+        <CardTitle className="text-3xl">{post.title}</CardTitle>
       </CardHeader>
       <CardContent className="m-0 ">
         <div
           className="tiptap p-0"
-          dangerouslySetInnerHTML={{ __html: post.description }}
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(post.description),
+          }}
         ></div>
         <div className="mt-2 flex items-center gap-x-2 ">
           <LikeButton

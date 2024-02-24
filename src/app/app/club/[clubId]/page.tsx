@@ -1,8 +1,13 @@
+import { ChatBubbleIcon } from "@radix-ui/react-icons";
+import { Button, buttonVariants } from "../../../../components/ui/button";
 import { getSession } from "../../../../lib/auth/utils";
 import { PostOutputs } from "../../../../server/api/root";
 import { db } from "../../../../server/db";
 import AddPostCard from "./AddPostCard";
 import PostCard from "./PostCard";
+import Link from "next/link";
+import { cn } from "../../../../lib/utils";
+import ChatLink from "./ChatLink";
 
 type Props = {
   params: {
@@ -37,7 +42,8 @@ const page = async ({ params }: Props) => {
   });
 
   return (
-    <div className="mx-auto flex w-full flex-col gap-y-2 md:w-[65%] lg:w-[55%] xl:w-[45%]">
+    <div className="mx-auto mb-20 flex w-full flex-col gap-y-2 md:w-[65%] lg:w-[55%] xl:w-[45%]">
+      <ChatLink clubId={params.clubId} />
       <AddPostCard clubId={params.clubId} />
 
       {posts.map((post) => (

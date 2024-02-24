@@ -53,7 +53,7 @@ const PostCard = ({ post, clubId }: Props) => {
       </CardHeader>
       <CardContent className="m-0 ">
         <div
-          className="tiptap p-0"
+          className="tiptap  p-0"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(post.description),
           }}

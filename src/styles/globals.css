@@ -58,6 +58,10 @@
   }
 }
 
+.tiptap * {
+  @apply line-clamp-1 max-w-fit text-wrap;
+}
+
 .tiptap h1 {
   @apply scroll-m-20 text-xl font-extrabold tracking-tight lg:text-xl;
 }

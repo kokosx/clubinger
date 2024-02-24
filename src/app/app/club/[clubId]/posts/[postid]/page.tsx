@@ -1,10 +1,16 @@
 import BackButton from "@/components/BackButton";
 import { db } from "../../../../../../server/db";
-import { getSession } from "../../../../../../lib/auth/utils";
+import { getSession } from "@/lib/auth/utils";
 import { notFound } from "next/navigation";
 import DOMPurify from "isomorphic-dompurify";
-import LikeButton from "../../../../../../components/LikeButton";
-import CommentButton from "../../../../../../components/CommentButton";
+import LikeButton from "@/components/LikeButton";
+import CommentButton from "@/components/CommentButton";
+import { Suspense } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import TextareaAutosize from "@/components/TextareaAutosize";
+import { Button } from "../../../../../../components/ui/button";
+import AddComment from "./AddComment";
+import Comments from "./Comments";
 
 type Props = {
   params: {
@@ -27,6 +33,7 @@ const page = async ({ params }: Props) => {
           avatarUrl: true,
         },
       },
+
       likes: { where: { userId: session!.user.id } },
       _count: { select: { likes: true, comments: true } },
     },
@@ -35,8 +42,6 @@ const page = async ({ params }: Props) => {
 
   if (!post) notFound();
 
-  const sanitizedDescription = DOMPurify.sanitize(post.description);
-
   return (
     <div>
       <BackButton />
@@ -44,7 +49,7 @@ const page = async ({ params }: Props) => {
       <div
         className="tiptap"
         dangerouslySetInnerHTML={{
-          __html: sanitizedDescription,
+          __html: DOMPurify.sanitize(post.description),
         }}
       ></div>
       <div className="flex gap-x-2">
@@ -56,8 +61,39 @@ const page = async ({ params }: Props) => {
         />
         <CommentButton commentAmount={post._count.comments} />
       </div>
+      <div className="flex flex-col gap-y-2">
+        <h3 className="mt-4 text-2xl font-medium">
+          Komentarze {post._count.comments}
+        </h3>
+        <h4 className="text-xl">Dodaj komentarz</h4>
+        <AddComment
+          clubId={Number(params.clubId)}
+          postId={Number(params.postid)}
+        />
+
+        {post._count.comments > -1 && (
+          <Suspense fallback={<p>LOADING</p>}>
+            <CommentsLoader postId={Number(params.postid)} />
+          </Suspense>
+        )}
+      </div>
     </div>
   );
 };
 
 export default page;
+
+type CommentsProps = {
+  postId: number;
+};
+
+const CommentsLoader = async ({ postId }: CommentsProps) => {
+  //TODO: Add scroll pagination
+  const comments = await db.postComment.findMany({
+    where: { postId },
+    include: { replies: true },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return <Comments comments={comments} />;
+};

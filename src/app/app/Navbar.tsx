@@ -64,7 +64,7 @@ const Navbar = ({ session, clubs }: Props) => {
   const [currentClubName, setCurrentClubName] = useState(getCurrentClubName());
 
   return (
-    <nav className="mb-2 flex gap-x-2">
+    <nav className="sticky z-50 mb-2 flex gap-x-2">
       <Link href="/app">
         <h1 className="hidden text-2xl font-semibold md:block md:text-4xl">
           KultKlub

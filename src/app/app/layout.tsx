@@ -19,7 +19,7 @@ const layout = async ({ children }: Props) => {
   });
 
   return (
-    <div className="container mx-auto  p-2 ">
+    <div className="container relative mx-auto flex flex-col  p-2 ">
       <Navbar session={session} clubs={attendedClubs.map((v) => v.club)} />
       <main>{children}</main>
     </div>

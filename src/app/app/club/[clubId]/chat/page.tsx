@@ -9,8 +9,11 @@ type Props = {
 
 const page = ({ params }: Props) => {
   return (
-    <div className="flex h-full min-h-full items-end">
-      <BackButton />
+    <div className="flex h-full min-h-full flex-col">
+      <span>
+        <BackButton />
+      </span>
+
       <ChatBox clubId={Number(params.clubId)} />
     </div>
   );

@@ -8,6 +8,7 @@ export const clubRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const club = await ctx.db.club.create({
         data: {
+          description: input.description,
           name: input.name,
           linkedBookGenres: {
             createMany: {

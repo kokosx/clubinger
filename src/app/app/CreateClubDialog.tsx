@@ -25,6 +25,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { LoadingButton } from "@/components/LoadingButton";
 import { toast } from "sonner";
 import { revalidatePathAction } from "../../actions/revalidatePathAction";
+import { Textarea } from "../../components/ui/textarea";
 
 type Props = {
   children: ReactNode;
@@ -64,7 +65,7 @@ const CreateClubDialog = ({ children, visible }: Props) => {
   const [chosenBookGenres, setChosenBookGenres] = useState<string[]>([]);
   const [chosenMusicGenres, setChosenMusicGenres] = useState<string[]>([]);
 
-  const onSubmit = handleSubmit(({ name }) => {
+  const onSubmit = handleSubmit(({ name, description }) => {
     const chosenMusicGenresIds = genres
       .data!.musicGenres.filter((v) =>
         chosenMusicGenres.includes(convertToSnakeCase(v.name)),
@@ -78,6 +79,7 @@ const CreateClubDialog = ({ children, visible }: Props) => {
 
     createClub.mutate({
       name,
+      description,
       bookGenresIds: chosenBookGenresIds,
       musicGenresIds: chosenMusicGenresIds,
     });
@@ -105,6 +107,11 @@ const CreateClubDialog = ({ children, visible }: Props) => {
             <InputField>
               <Label className="text-xl">Nazwa klubu</Label>
               <Input {...register("name")} />
+              <InputError error={errors.name?.message} />
+            </InputField>
+            <InputField>
+              <Label className="text-xl">Opis</Label>
+              <Textarea {...register("description")} />
               <InputError error={errors.name?.message} />
             </InputField>
             {genres.isLoading ? (

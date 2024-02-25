@@ -1,12 +1,6 @@
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../../../components/ui/card";
-import { ArrowRightCircleIcon } from "lucide-react";
-import { Skeleton } from "../../../../components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
   clubId: string;

@@ -19,9 +19,9 @@ const layout = async ({ children }: Props) => {
   });
 
   return (
-    <div className="container relative mx-auto flex flex-col  p-2 ">
+    <div className="container  mx-auto flex h-full min-h-screen flex-col  p-2 ">
       <Navbar session={session} clubs={attendedClubs.map((v) => v.club)} />
-      <main>{children}</main>
+      <main className="h-full min-h-full">{children}</main>
     </div>
   );
 };

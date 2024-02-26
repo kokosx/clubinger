@@ -18,6 +18,7 @@ model User {
   avatarUrl       String
   participatantAt ClubParticipant[]
 
+  favoriteClubs FavoriteClub[]
   chatMessages ChatMessage[]
   createdClubs Club[] @relation("created-club")
   createdPosts Post[]
@@ -74,6 +75,7 @@ model Club {
   avatarUrl String
   avatarMediaType AvatarMediaType @default(DICEBEAR)
 
+  favoriteOf FavoriteClub[]
   posts Post[]
   participants ClubParticipant[]
   linkedMusicGenres ClubsLinkedMusicGenre[]
@@ -171,6 +173,15 @@ model ClubsLinkedMusicGenre {
   musicGenre MusicGenre @relation(references: [id],fields: [musicGenreId],onDelete: Cascade,onUpdate: Cascade)
 
   @@id([clubId,musicGenreId])
+}
+
+model FavoriteClub {
+  user User @relation(fields: [userId],references: [id],onUpdate: Cascade,onDelete: Cascade)
+  userId String
+  club Club @relation(fields: [clubId],references: [id],onUpdate: Cascade,onDelete: Cascade)
+  clubId Int
+
+  @@id([clubId,userId])
 }
 
 model Session {

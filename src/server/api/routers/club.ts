@@ -1,5 +1,9 @@
-import { authenticatedProcedure, createTRPCRouter } from "@/server/api/trpc";
-import { addClubSchema } from "@/schemas/club";
+import {
+  attendingUserProcedure,
+  authenticatedProcedure,
+  createTRPCRouter,
+} from "@/server/api/trpc";
+import { addClubSchema, favoriteClubSchema } from "@/schemas/club";
 import crypto from "node:crypto";
 
 export const clubRouter = createTRPCRouter({
@@ -32,5 +36,27 @@ export const clubRouter = createTRPCRouter({
       });
 
       return { club };
+    }),
+  makeFavorite: attendingUserProcedure
+    .input(favoriteClubSchema)
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.favoriteClub.createMany({
+        data: {
+          clubId: input.clubId,
+          userId: ctx.user.id,
+        },
+      });
+      return {};
+    }),
+  makeNotFavorite: attendingUserProcedure
+    .input(favoriteClubSchema)
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.favoriteClub.deleteMany({
+        where: {
+          clubId: input.clubId,
+          userId: ctx.user.id,
+        },
+      });
+      return {};
     }),
 });

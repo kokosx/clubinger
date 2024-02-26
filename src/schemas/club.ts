@@ -14,3 +14,7 @@ export const addClubFormSchema = z.object({
   name: z.string().min(3).max(20),
   description: clubNameDescription,
 });
+
+export const favoriteClubSchema = z.object({
+  clubId: z.number(),
+});

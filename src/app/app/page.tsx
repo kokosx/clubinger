@@ -14,10 +14,28 @@ const page = async ({ searchParams }: Props) => {
 
   const session = await getSession();
 
-  const favoriteClubs = [];
+  const favoriteClubs = await db.clubParticipant.findMany({
+    include: {
+      club: true,
+    },
+    where: {
+      userId: session!.user.id,
+      club: {
+        favoriteOf: {
+          some: {
+            userId: session!.user.id,
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 3,
+  });
 
   const clubsJoinedRecently = await db.clubParticipant.findMany({
-    include: { club: true },
+    include: {
+      club: true,
+    },
     where: {
       userId: session!.user.id,
     },
@@ -34,8 +52,13 @@ const page = async ({ searchParams }: Props) => {
           <h2 className="text-2xl font-semibold">
             Odwiedź swoje ulubione miejsca
           </h2>
+          <ClubCards
+            areFavorite={true}
+            clubs={favoriteClubs.map((v) => v.club)}
+          />
 
           {favoriteClubs.length === 0}
+          {/* TODO: Add everytihng into one component that displays clubs dynamically */}
           <h2 className="text-2xl font-semibold">Ostatnio dołączone</h2>
           <ClubCards clubs={clubsJoinedRecently.map((v) => v.club)} />
         </>

@@ -39,7 +39,7 @@ const page = async ({ params }: Props) => {
       <AddPostCard clubId={params.clubId} />
 
       {posts.map((post) => (
-        <PostCard key={post.id} clubId={Number(params.clubId)} post={post} />
+        <PostCard key={post.id} post={post} />
       ))}
     </div>
   );

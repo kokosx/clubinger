@@ -79,7 +79,8 @@ const Navbar = ({ session, clubs }: Props) => {
     <nav className="sticky z-50 mb-2 flex gap-x-2">
       <Link href="/app">
         <h1 className="hidden text-2xl font-semibold md:block md:text-4xl">
-          KultKlub
+          <span className="text-primary">K</span>ult
+          <span className="text-primary">K</span>lub
         </h1>
         <Image
           src="/logo.png"

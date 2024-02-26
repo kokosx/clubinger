@@ -17,15 +17,14 @@ import DOMPurify from "isomorphic-dompurify";
 
 type Props = {
   post: PostOutputs["getPost"];
-  clubId: number;
 };
 
-const PostCard = ({ post, clubId }: Props) => {
+const PostCard = ({ post }: Props) => {
   const router = useRouter();
 
   return (
     <Card
-      onClick={() => router.push(`/app/club/${clubId}/posts/${post.id}`)}
+      onClick={() => router.push(`/app/club/${post.clubId}/posts/${post.id}`)}
       className="hover:cursor-pointer"
     >
       <CardHeader className="py-1 pt-3">
@@ -60,7 +59,7 @@ const PostCard = ({ post, clubId }: Props) => {
         ></div>
         <div className="mt-2 flex items-center gap-x-2 ">
           <LikeButton
-            clubId={clubId}
+            clubId={post.clubId}
             isInitiallyLiked={post.likes.length > 0}
             initialLikeAmount={post._count.likes}
             postId={post.id}

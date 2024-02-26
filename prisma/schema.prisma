@@ -17,6 +17,7 @@ model User {
   avatarMediaType AvatarMediaType @default(DICEBEAR)
   avatarUrl       String
   participatantAt ClubParticipant[]
+  description String @default("")
 
   favoriteClubs FavoriteClub[]
   chatMessages ChatMessage[]

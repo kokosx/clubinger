@@ -11,9 +11,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Button } from "../../components/ui/button";
+import { Button, buttonVariants } from "../../components/ui/button";
 import { Club } from "@prisma/client";
-import { ChevronDownIcon, PlusIcon } from "lucide-react";
+import { ChevronDownIcon, LogOutIcon, PlusIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -125,11 +125,38 @@ const Navbar = ({ session, clubs }: Props) => {
       </div>
 
       <div className="ml-auto flex items-center gap-x-2">
-        <UserAvatar
-          avatarUrl={session.user.avatarUrl}
-          mediaType={session.user.avatarMediaType}
-        />
-        <p className="hidden md:block">{session.user.username}</p>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="space-x-1" variant={"outline"}>
+              <UserAvatar
+                avatarUrl={session.user.avatarUrl}
+                mediaType={session.user.avatarMediaType}
+              />
+              <p className="hidden md:block">{session.user.username}</p>
+              <ChevronDownIcon />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Twoje konto</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <Link className="w-full" href={`/app/users/${session.user.id}`}>
+                  Profil
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link
+                  className="flex w-full items-center gap-x-1"
+                  href={`/app/users/${session.user.id}`}
+                >
+                  Wyloguj się
+                  <LogOutIcon size={18} />
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </nav>
   );

@@ -27,5 +27,14 @@ export type Auth = typeof auth;
 
 export const getPageSession = cache((method: "GET" | "POST" = "GET") => {
   const authRequest = auth.handleRequest(method, context);
+
   return authRequest.validate();
 });
+
+/** Works only with POST */
+export const invalidateSession = async () => {
+  const cookieId: string = context.cookies().get("__session")!
+    .value! as unknown as string;
+
+  await auth.invalidateSession(cookieId);
+};

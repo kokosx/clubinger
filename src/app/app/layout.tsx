@@ -4,8 +4,6 @@ import { redirect } from "next/navigation";
 import Navbar from "./Navbar";
 import { db } from "@/server/db";
 
-export const revalidate = true;
-
 type Props = PropsWithChildren & {};
 
 const layout = async ({ children }: Props) => {

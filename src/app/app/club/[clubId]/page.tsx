@@ -1,12 +1,8 @@
-import { ChatBubbleIcon } from "@radix-ui/react-icons";
-import { Button, buttonVariants } from "../../../../components/ui/button";
 import { getSession } from "../../../../lib/auth/utils";
 import { PostOutputs } from "../../../../server/api/root";
 import { db } from "../../../../server/db";
 import AddPostCard from "./AddPostCard";
 import PostCard from "./PostCard";
-import Link from "next/link";
-import { cn } from "../../../../lib/utils";
 import ChatLink from "./ChatLink";
 
 type Props = {
@@ -35,10 +31,6 @@ const page = async ({ params }: Props) => {
       _count: { select: { likes: true, comments: true } },
     },
     orderBy: { createdAt: "desc" },
-  });
-
-  await new Promise((res) => {
-    setTimeout(res, 3000);
   });
 
   return (

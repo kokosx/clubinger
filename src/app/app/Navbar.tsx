@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Button, buttonVariants } from "../../components/ui/button";
 import { Club } from "@prisma/client";
-import { ChevronDownIcon, LogOutIcon, PlusIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, LogOutIcon, PlusIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,8 +26,10 @@ import {
 
 import CreateClubDialog from "./CreateClubDialog";
 import { DrawerTrigger } from "../../components/ui/drawer";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import ClubAvatar from "@/components/ClubAvatar";
+import { api } from "../../trpc/react";
+import { toast } from "sonner";
 
 type Props = {
   session: Session;
@@ -38,6 +40,16 @@ const Navbar = ({ session, clubs }: Props) => {
   const [isNewClubVisible, setIsNewClubVisible] = useState(false);
   const params = useParams<{ clubId: string }>();
   const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const _logout = api.auth.logout.useMutation({
+    onSuccess: () => {
+      toast("Pomyślnie wylogowano", {
+        icon: <CheckIcon className="text-green-500" />,
+      });
+      router.push("/");
+    },
+  });
 
   const getCurrentClubName = () => {
     if (!params.clubId) {
@@ -146,13 +158,13 @@ const Navbar = ({ session, clubs }: Props) => {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link
+                <button
                   className="flex w-full items-center gap-x-1"
-                  href={`/app/users/${session.user.id}`}
+                  onClick={() => _logout.mutate()}
                 >
                   Wyloguj się
                   <LogOutIcon size={18} />
-                </Link>
+                </button>
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>

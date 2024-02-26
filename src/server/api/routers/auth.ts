@@ -1,6 +1,10 @@
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import {
+  authenticatedProcedure,
+  createTRPCRouter,
+  publicProcedure,
+} from "@/server/api/trpc";
 import { signupSchema, signinSchema } from "@/schemas/user";
-import { auth } from "@/lib/auth/auth";
+import { auth, invalidateSession } from "@/lib/auth/auth";
 import crypto from "node:crypto";
 import { LuciaError } from "lucia";
 import { TRPCError } from "@trpc/server";
@@ -87,5 +91,9 @@ export const authRouter = createTRPCRouter({
     }
 
     return { success: true };
+  }),
+  logout: authenticatedProcedure.mutation(async ({}) => {
+    await invalidateSession();
+    return {};
   }),
 });

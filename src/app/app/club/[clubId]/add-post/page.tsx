@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import InputError from "@/components/InputError";
 import { useForm } from "react-hook-form";
-import { addPostSchema } from "../../../../../schemas/post";
+import { addPostSchema } from "@/schemas/post";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoadingButton } from "@/components/LoadingButton";
-import { api } from "../../../../../trpc/react";
+import { api } from "@/trpc/react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import BackButton from "@/components/BackButton";
 
 const page = () => {
   const { clubId } = useParams();
@@ -51,6 +52,7 @@ const page = () => {
 
   return (
     <form onSubmit={onSubmit}>
+      <BackButton />
       <InputField>
         <Label className="text-2xl" htmlFor="title">
           Tytuł

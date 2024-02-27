@@ -98,9 +98,7 @@ const CreateClubDialog = ({ children, visible }: Props) => {
         <div className="my-8px mx-auto w-full  max-w-sm overflow-y-scroll">
           <DrawerHeader>
             <DrawerTitle>Utwórz nowy klub</DrawerTitle>
-            <DrawerDescription>
-              Na ich podstawie będą polecane tobie kluby
-            </DrawerDescription>
+            <DrawerDescription>Spraw by był ciekawy! 🎉️🎉️ </DrawerDescription>
           </DrawerHeader>
 
           <div className="px-4">
@@ -125,14 +123,14 @@ const CreateClubDialog = ({ children, visible }: Props) => {
                   chosenGenres={chosenMusicGenres}
                   maxLength={5}
                   setChosenGenres={setChosenMusicGenres}
-                  title="Gatunki muzyki"
+                  title="Gatunki muzyki 🎶️"
                 />
                 <GenreChooser
                   allGenres={genres.data!.bookGenres}
                   chosenGenres={chosenBookGenres}
                   maxLength={5}
                   setChosenGenres={setChosenBookGenres}
-                  title="Gatunki książek"
+                  title="Gatunki książek 📘️"
                 />
               </>
             )}

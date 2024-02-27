@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
+import { CheckIcon } from "lucide-react";
 
 const page = () => {
   const router = useRouter();
@@ -31,7 +32,9 @@ const page = () => {
     },
     onMutate: () => setError(false),
     onSuccess: () => {
-      toast("Pomyślnie utworzono konto. Zaraz nastąpi przekierowanie");
+      toast("Pomyślnie utworzono konto. Zaraz nastąpi przekierowanie", {
+        icon: <CheckIcon className="text-green-500" />,
+      });
       router.push("/app?newuser=true");
     },
   });

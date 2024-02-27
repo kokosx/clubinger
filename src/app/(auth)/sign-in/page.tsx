@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { CheckIcon } from "lucide-react";
 
 const page = () => {
   const router = useRouter();
@@ -31,7 +32,9 @@ const page = () => {
     },
     onMutate: () => setError(false),
     onSuccess: () => {
-      toast("Pomyślnie zalogowano. Zaraz nastąpi przekierowanie");
+      toast("Pomyślnie zalogowano. Zaraz nastąpi przekierowanie", {
+        icon: <CheckIcon className="text-green-500" />,
+      });
       router.push("/app");
     },
   });

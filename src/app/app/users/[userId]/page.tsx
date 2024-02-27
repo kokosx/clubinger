@@ -16,6 +16,7 @@ type Props = {
 const page = async ({ params }: Props) => {
   const session = await getSession();
 
+  //TODO: Add pagination
   const user = await db.user.findFirst({
     where: {
       id: params.userId,

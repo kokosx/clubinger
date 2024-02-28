@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { ArrowBigUp } from "lucide-react";
 import { api } from "../trpc/react";
 import { formatNumber } from "../lib/format";
+import { useLike } from "../app/app/club/[clubId]/LikedPostsProvider";
 
 type Props = {
   initialLikeAmount: number;
@@ -19,8 +20,12 @@ const LikeButton = ({
   postId,
   clubId,
 }: Props) => {
-  const [isLiked, setIsLiked] = useState(isInitiallyLiked);
   const [isDisabled, setIsDisabled] = useState(false);
+  const { addLike, deleteLike, isLiked, likeCount } = useLike(
+    postId,
+    isInitiallyLiked,
+    initialLikeAmount,
+  );
 
   const _likePost = api.post.likePost.useMutation({
     onMutate: () => {
@@ -38,14 +43,13 @@ const LikeButton = ({
     if (isLiked) {
       setIsDisabled(true);
       _unlikePost.mutate({ postId, clubId });
-      setIsLiked(false);
+      deleteLike();
 
       return;
     }
     setIsDisabled(true);
     _likePost.mutate({ postId, clubId });
-
-    setIsLiked(true);
+    addLike();
   };
 
   const getLikeAmount = () => {
@@ -69,7 +73,7 @@ const LikeButton = ({
       className="w-16"
     >
       <ArrowBigUp />
-      <span>{formatNumber(getLikeAmount())}</span>
+      <span>{formatNumber(likeCount)}</span>
     </Button>
   );
 };

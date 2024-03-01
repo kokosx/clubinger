@@ -6,11 +6,8 @@ import DOMPurify from "isomorphic-dompurify";
 import LikeButton from "@/components/LikeButton";
 import CommentButton from "@/components/CommentButton";
 import { Suspense } from "react";
-import { Textarea } from "@/components/ui/textarea";
-import TextareaAutosize from "@/components/TextareaAutosize";
-import { Button } from "../../../../../../components/ui/button";
 import AddComment from "./AddComment";
-import Comments from "./Comments";
+import Comment from "./Comment";
 
 type Props = {
   params: {
@@ -73,7 +70,10 @@ const page = async ({ params }: Props) => {
 
         {post._count.comments > -1 && (
           <Suspense fallback={<p>LOADING</p>}>
-            <CommentsLoader postId={Number(params.postid)} />
+            <Comments
+              userId={session!.user.id}
+              postId={Number(params.postid)}
+            />
           </Suspense>
         )}
       </div>
@@ -85,15 +85,32 @@ export default page;
 
 type CommentsProps = {
   postId: number;
+  userId: string;
 };
 
-const CommentsLoader = async ({ postId }: CommentsProps) => {
+const Comments = async ({ postId, userId }: CommentsProps) => {
   //TODO: Add scroll pagination
   const comments = await db.postComment.findMany({
     where: { postId },
-    include: { replies: true },
+    include: {
+      replies: true,
+
+      _count: { select: { likes: true } },
+      likes: {
+        where: {
+          userId,
+        },
+      },
+    },
+
     orderBy: { createdAt: "desc" },
   });
 
-  return <Comments comments={comments} />;
+  return (
+    <div className="flex flex-col gap-y-2">
+      {comments.map((comment) => (
+        <Comment key={comment.id} comment={comment} />
+      ))}
+    </div>
+  );
 };

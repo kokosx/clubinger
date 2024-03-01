@@ -1,17 +1,17 @@
 "use client";
 
 import TextareaAutosize from "@/components/TextareaAutosize";
-import { Textarea } from "../../../../../../components/ui/textarea";
-import { Button } from "../../../../../../components/ui/button";
-import { api } from "../../../../../../trpc/react";
+import { Textarea } from "@/components/ui/textarea";
+import { api } from "@/trpc/react";
 import { useForm } from "react-hook-form";
-import { message } from "../../../../../../schemas/comment";
+import { commentMessage } from "@/schemas/comment";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
+import { LoadingButton } from "@/components/LoadingButton";
 
 type Form = {
-  message: typeof message._output;
+  message: typeof commentMessage._output;
 };
 
 type Props = {
@@ -21,7 +21,7 @@ type Props = {
 
 const AddComment = ({ clubId, postId }: Props) => {
   const { handleSubmit, register, reset } = useForm<Form>({
-    resolver: zodResolver(z.object({ message })),
+    resolver: zodResolver(z.object({ message: commentMessage })),
   });
   const _addComment = api.comment.createComment.useMutation({
     onSuccess() {
@@ -30,7 +30,7 @@ const AddComment = ({ clubId, postId }: Props) => {
     },
   });
   const onSubmit = handleSubmit(({ message }) => {
-    _addComment.mutate({ clubId, message, postId });
+    _addComment.mutate({ clubId, message, parentId: postId });
   });
 
   return (
@@ -40,7 +40,9 @@ const AddComment = ({ clubId, postId }: Props) => {
         {...register("message")}
         className="min-h-28 w-full md:max-w-[60%]"
       />
-      <Button className="max-w-24">Dodaj</Button>
+      <LoadingButton loading={_addComment.isLoading} className="max-w-24">
+        Dodaj
+      </LoadingButton>
     </form>
   );
 };

@@ -20,12 +20,12 @@ const formSchema = z.object({
 });
 
 type Props = {
-  setNewReplies: Dispatch<SetStateAction<PostCommentReply[]>>;
+  addNewReply: (a: PostCommentReply) => void;
   commentId: number;
   clubId: number;
 };
 
-const AddReply = ({ setNewReplies, clubId, commentId }: Props) => {
+const AddReply = ({ addNewReply, clubId, commentId }: Props) => {
   const {
     register,
     reset,
@@ -42,7 +42,7 @@ const AddReply = ({ setNewReplies, clubId, commentId }: Props) => {
   const _addReply = api.comment.createReply.useMutation({
     onSuccess: ({ data }) => {
       reset();
-      setNewReplies((p) => [data, ...p]);
+      addNewReply(data);
       toast("Pomyślnie dodano odpowiedź");
     },
     onError: () => {

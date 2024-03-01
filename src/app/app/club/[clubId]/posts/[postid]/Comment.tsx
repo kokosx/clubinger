@@ -31,6 +31,12 @@ const Comment = ({ comment }: Props) => {
   const [isAnswerOpen, setIsAnswerOpen] = useState(false);
   const [newReplies, setNewReplies] = useState<PostCommentReply[]>([]);
   const [repliesShown, setRepliesShown] = useState(false);
+
+  const addNewReply = (newReply: PostCommentReply) => {
+    setNewReplies((p) => [newReply, ...p]);
+    setIsAnswerOpen(false);
+  };
+
   const { clubId }: { clubId: string } = useParams();
   return (
     <div className="flex flex-col gap-y-2">
@@ -66,7 +72,9 @@ const Comment = ({ comment }: Props) => {
               >
                 {repliesShown ? <ArrowUp /> : <ArrowDown />}
 
-                <span>{comment.replies.length} odpowiedzi</span>
+                <span>
+                  {comment.replies.length + newReplies.length} odpowiedzi
+                </span>
               </Button>
             </div>
           </CardContent>
@@ -75,7 +83,7 @@ const Comment = ({ comment }: Props) => {
       <div className="ml-8 flex flex-col gap-y-2">
         {isAnswerOpen && (
           <AddReply
-            setNewReplies={setNewReplies}
+            addNewReply={addNewReply}
             clubId={Number(clubId)}
             commentId={comment.id}
           />

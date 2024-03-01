@@ -68,7 +68,7 @@ const Comment = ({ comment }: Props) => {
               </Button>
               <Button
                 onClick={() => setRepliesShown((p) => !p)}
-                variant={"outline"}
+                variant={repliesShown ? "outline" : "secondary"}
               >
                 {repliesShown ? <ArrowUp /> : <ArrowDown />}
 

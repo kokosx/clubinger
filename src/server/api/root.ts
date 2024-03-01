@@ -4,9 +4,11 @@ import { genresRouter } from "./routers/genres";
 import { userRouter } from "./routers/user";
 import { clubRouter } from "./routers/club";
 import { postRouter } from "./routers/post";
-import { inferRouterOutputs } from "@trpc/server";
+import { createCallerFactory, inferRouterOutputs } from "@trpc/server";
 import { commentRouter } from "./routers/comment";
 import { chatRouter } from "./routers/chat";
+import { db } from "../db";
+import { createContext } from "../../trpc/server";
 
 /**
  * This is the primary router for your server.
@@ -27,3 +29,6 @@ export const appRouter = createTRPCRouter({
 export type AppRouter = typeof appRouter;
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 export type PostOutputs = RouterOutputs["post"];
+
+const createCaller = createCallerFactory();
+export const serverCaller = createCaller(appRouter)(await createContext());

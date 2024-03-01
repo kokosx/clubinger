@@ -46,7 +46,7 @@ const page = async ({ searchParams }: Props) => {
   return (
     <div className="flex flex-col gap-y-2">
       {clubsJoinedRecently.length === 0 ? (
-        <p>Dołąćż gdzies</p>
+        <p>Dołącz gdzies</p>
       ) : (
         <>
           <h2 className="text-2xl font-semibold">

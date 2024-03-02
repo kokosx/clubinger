@@ -5,6 +5,7 @@ import {
 } from "@/server/api/trpc";
 import { addClubSchema, favoriteClubSchema } from "@/schemas/club";
 import crypto from "node:crypto";
+import { TRPCError } from "@trpc/server";
 
 export const clubRouter = createTRPCRouter({
   createClub: authenticatedProcedure
@@ -40,23 +41,31 @@ export const clubRouter = createTRPCRouter({
   makeFavorite: attendingUserProcedure
     .input(favoriteClubSchema)
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.favoriteClub.createMany({
-        data: {
-          clubId: input.clubId,
-          userId: ctx.user.id,
-        },
-      });
-      return {};
+      try {
+        await ctx.db.favoriteClub.createMany({
+          data: {
+            clubId: input.clubId,
+            userId: ctx.user.id,
+          },
+        });
+        return {};
+      } catch (error) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
     }),
   makeNotFavorite: attendingUserProcedure
     .input(favoriteClubSchema)
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.favoriteClub.deleteMany({
-        where: {
-          clubId: input.clubId,
-          userId: ctx.user.id,
-        },
-      });
-      return {};
+      try {
+        await ctx.db.favoriteClub.deleteMany({
+          where: {
+            clubId: input.clubId,
+            userId: ctx.user.id,
+          },
+        });
+        return {};
+      } catch (error) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
     }),
 });

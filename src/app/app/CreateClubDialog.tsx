@@ -54,11 +54,11 @@ const CreateClubDialog = ({ children, visible }: Props) => {
       setError("Wystąpił nieznany błąd " + error.data?.code);
     },
     onSuccess({ club }) {
-      router.push(`/app/club/${club.id}?justCreated=true`);
       toast("Utworzono klub!");
       //@ts-expect-error Close the drawer after navigation
       document.querySelector("#drawer-close")!.click();
       revalidatePathAction("/app", "layout");
+      router.push(`/app/club/${club.id}?justCreated=true`);
     },
   });
 

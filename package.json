@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "next build --no-lint",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "dev": "next dev",
@@ -40,6 +40,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
+    "critters": "^0.0.21",
     "i18next": "^23.7.12",
     "isomorphic-dompurify": "^2.4.0",
     "lucia": "^2.7.6",

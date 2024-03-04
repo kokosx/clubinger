@@ -50,7 +50,7 @@ const page = async ({ params }: Props) => {
   if (!user) notFound();
   return (
     <div className="flex flex-col gap-x-4 gap-y-2 lg:flex-row">
-      <div className="relative">
+      <div className="relative w-full lg:w-1/3">
         <UserAvatar
           avatarUrl={user.avatarUrl}
           mediaType={user.avatarMediaType}

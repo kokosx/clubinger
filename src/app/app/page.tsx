@@ -1,6 +1,7 @@
 import { getSession } from "../../lib/auth/utils";
 import { db } from "../../server/db";
 import Clubs from "./Clubs";
+import DiscoverCard from "./DiscoverCard";
 import NewUser from "./NewUser";
 
 type Props = {
@@ -55,7 +56,7 @@ const page = async ({ searchParams }: Props) => {
   return (
     <div className="flex flex-col gap-y-2">
       {clubsJoinedRecently.length === 0 && favoriteClubs.length === 0 ? (
-        <p>Dołącz gdzies</p>
+        <DiscoverCard />
       ) : (
         <Clubs
           favoriteClubs={favoriteClubs.map((v) => v.club)}

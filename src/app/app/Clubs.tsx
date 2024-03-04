@@ -2,13 +2,7 @@
 
 import { Club } from "@prisma/client";
 import ClubCard from "./ClubCard";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
-import Link from "next/link";
+import DiscoverCard from "./DiscoverCard";
 
 type Props = {
   lastJoinedClubs: Club[];
@@ -34,18 +28,7 @@ const Clubs = ({ favoriteClubs, lastJoinedClubs }: Props) => {
         {favoriteClubs.length === 0}
         {/* TODO: Add everytihng into one component that displays clubs dynamically */}
       </>
-      <Link href={"/app/discover"}>
-        <Card className="mx-auto w-[300px] border-primary md:w-[600px] ">
-          <CardHeader>
-            <div className="flex w-full items-center gap-x-1">
-              <CardTitle>Odkryj nowe kluby</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p>Odkryj nowych ludzi i hobby</p>
-          </CardContent>
-        </Card>
-      </Link>
+      <DiscoverCard />
     </>
   );
 };

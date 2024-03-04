@@ -89,8 +89,9 @@ const Comment = ({ comment }: Props) => {
           />
         )}
 
-        {repliesShown && newReplies.map((r) => <Reply reply={r} />)}
-        {repliesShown && comment.replies.map((r) => <Reply reply={r} />)}
+        {repliesShown && newReplies.map((r) => <Reply key={r.id} reply={r} />)}
+        {repliesShown &&
+          comment.replies.map((r) => <Reply key={r.id} reply={r} />)}
       </div>
     </div>
   );

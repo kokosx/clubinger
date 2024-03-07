@@ -8,6 +8,9 @@ import CommentButton from "@/components/CommentButton";
 import { Suspense } from "react";
 import AddComment from "./AddComment";
 import Comment from "./Comment";
+import NewCommentProvider from "./NewCommentProvider";
+import Comments from "./Comments";
+import { PostComment, PostCommentLike, PostCommentReply } from "@prisma/client";
 
 type Props = {
   params: {
@@ -63,19 +66,21 @@ const page = async ({ params }: Props) => {
           Komentarze {post._count.comments}
         </h3>
         <h4 className="text-xl">Dodaj komentarz</h4>
-        <AddComment
-          clubId={Number(params.clubId)}
-          postId={Number(params.postid)}
-        />
+        <NewCommentProvider>
+          <AddComment
+            clubId={Number(params.clubId)}
+            postId={Number(params.postid)}
+          />
 
-        {post._count.comments > -1 && (
-          <Suspense fallback={<p>LOADING</p>}>
-            <Comments
-              userId={session!.user.id}
-              postId={Number(params.postid)}
-            />
-          </Suspense>
-        )}
+          {post._count.comments > -1 && (
+            <Suspense fallback={<p>LOADING</p>}>
+              <CommentsLoader
+                userId={session!.user.id}
+                postId={Number(params.postid)}
+              />
+            </Suspense>
+          )}
+        </NewCommentProvider>
       </div>
     </div>
   );
@@ -83,12 +88,20 @@ const page = async ({ params }: Props) => {
 
 export default page;
 
+export type DisplayComment = PostComment & {
+  replies: PostCommentReply[];
+  _count: {
+    likes: number;
+  };
+  likes: PostCommentLike[];
+};
+
 type CommentsProps = {
   postId: number;
   userId: string;
 };
 
-const Comments = async ({ postId, userId }: CommentsProps) => {
+const CommentsLoader = async ({ postId, userId }: CommentsProps) => {
   //TODO: Add scroll pagination
   const comments = await db.postComment.findMany({
     where: { postId },
@@ -106,11 +119,5 @@ const Comments = async ({ postId, userId }: CommentsProps) => {
     orderBy: { createdAt: "desc" },
   });
 
-  return (
-    <div className="flex flex-col gap-y-2">
-      {comments.map((comment) => (
-        <Comment key={comment.id} comment={comment} />
-      ))}
-    </div>
-  );
+  return <Comments comments={comments} />;
 };

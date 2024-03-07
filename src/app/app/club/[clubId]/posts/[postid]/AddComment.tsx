@@ -9,6 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { LoadingButton } from "@/components/LoadingButton";
+import { useContext } from "react";
+import { NewCommentContext } from "./NewCommentProvider";
 
 type Form = {
   message: typeof commentMessage._output;
@@ -23,12 +25,15 @@ const AddComment = ({ clubId, postId }: Props) => {
   const { handleSubmit, register, reset } = useForm<Form>({
     resolver: zodResolver(z.object({ message: commentMessage })),
   });
+  const ctx = useContext(NewCommentContext);
   const _addComment = api.comment.createComment.useMutation({
-    onSuccess() {
+    onSuccess({ data }) {
       toast("Dodano komentarz!");
+      ctx.addComment(data);
       reset();
     },
   });
+
   const onSubmit = handleSubmit(({ message }) => {
     _addComment.mutate({ clubId, message, parentId: postId });
   });

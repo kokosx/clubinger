@@ -1,6 +1,7 @@
 import { db } from "@/server/db";
 import { getSession } from "../../../lib/auth/utils";
 import PostCard from "../club/[clubId]/PostCard";
+import BackButton from "../../../components/BackButton";
 
 const page = async () => {
   const session = await getSession();
@@ -29,7 +30,11 @@ const page = async () => {
   });
   return (
     <div className="flex flex-col gap-y-2">
-      <h2>Twoje zapisany posty</h2>
+      <span>
+        <BackButton />
+      </span>
+
+      <h2 className="text-3xl font-semibold">Twoje zapisane posty</h2>
       {savedPosts.map((post) => (
         <PostCard post={post} />
       ))}

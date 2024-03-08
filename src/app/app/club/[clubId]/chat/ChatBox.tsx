@@ -20,13 +20,14 @@ import { chatMessageSchema } from "@/schemas/chat";
 
 type Props = {
   clubId: number;
+  roomId: number;
 };
 
 const formSchema = z.object({
   message: chatMessageSchema,
 });
 
-const ChatBox = ({ clubId }: Props) => {
+const ChatBox = ({ clubId, roomId }: Props) => {
   const _sendMessage = api.chat.sendClubMessage.useMutation();
   const [messages, setMessages] = useState<NewClubMessage[]>([]);
   const { register, handleSubmit, reset } = useForm<typeof formSchema._output>({
@@ -46,7 +47,7 @@ const ChatBox = ({ clubId }: Props) => {
   }, []);
 
   const onSubmit = handleSubmit(({ message }) => {
-    _sendMessage.mutate({ message, clubId });
+    _sendMessage.mutate({ message, roomId, clubId });
     reset();
   });
 

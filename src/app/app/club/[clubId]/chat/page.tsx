@@ -14,7 +14,7 @@ const page = ({ params }: Props) => {
         <BackButton />
       </span>
 
-      <ChatBox clubId={Number(params.clubId)} />
+      <ChatBox roomId={1} clubId={Number(params.clubId)} />
     </div>
   );
 };

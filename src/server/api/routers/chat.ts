@@ -15,7 +15,7 @@ export const chatRouter = createTRPCRouter({
       const newMessage = await ctx.db.chatMessage.create({
         data: {
           message: input.message,
-          clubId: input.clubId,
+          roomId: input.roomId,
           createdBy: ctx.user.id,
         },
         include: {

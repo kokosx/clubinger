@@ -36,7 +36,15 @@ export const clubRouter = createTRPCRouter({
           avatarUrl: crypto.randomBytes(16).toString("hex"),
         },
       });
-
+      //Create default chat room
+      await ctx.db.chatRoom.create({
+        data: {
+          name: "General",
+          clubId: club.id,
+          createdBy: ctx.user.id,
+          isGeneral: true,
+        },
+      });
       return { club };
     }),
   makeFavorite: attendingUserProcedure

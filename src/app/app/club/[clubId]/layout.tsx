@@ -21,7 +21,7 @@ const layout = async ({ children, params }: Props) => {
       userId: session!.user.id,
     },
   });
-  console.log(attends);
+
   if (!attends) redirect("/app");
 
   return <LikedPostsProvider>{children}</LikedPostsProvider>;

@@ -19,6 +19,7 @@ model User {
   participatantAt ClubParticipant[]
   description String @default("")
 
+  createdChatRooms ChatRoom[]
   savedPosts SavedPost[]
   favoriteClubs FavoriteClub[]
   chatMessages ChatMessage[]
@@ -79,12 +80,12 @@ model Club {
   avatarUrl String
   avatarMediaType AvatarMediaType @default(DICEBEAR)
 
+chatRooms ChatRoom[]
   favoriteOf FavoriteClub[]
   posts Post[]
   participants ClubParticipant[]
   linkedMusicGenres ClubsLinkedMusicGenre[]
   linkedBookGenres ClubsLinkedBookGenre[]
-  chatMessages ChatMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -182,11 +183,24 @@ model ClubParticipant {
   @@id([userId,clubId])
 }
 
+model ChatRoom {
+  id Int @id @default(autoincrement())
+  name String
+  club Club @relation(fields: [clubId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+  clubId Int
+  createdBy String
+  user User @relation(fields: [createdBy],references: [id],onUpdate: Cascade,onDelete: Cascade)
+  isGeneral Boolean @default(false)
+
+  messages ChatMessage[]
+
+}
+
 model ChatMessage {
   id Int @id @default(autoincrement())
   message String
-  club Club @relation(fields: [clubId],references: [id],onDelete: Cascade,onUpdate: Cascade)
-  clubId Int
+  room ChatRoom @relation(fields: [roomId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+  roomId Int
   user User @relation(fields: [createdBy],references: [id],onUpdate: Cascade,onDelete: Cascade)
   createdBy String
 }

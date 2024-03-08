@@ -7,11 +7,7 @@ const page = async () => {
   const session = await getSession();
   const savedPosts = await db.post.findMany({
     where: {
-      saved: {
-        some: {
-          savedBy: session!.user.id,
-        },
-      },
+      createdBy: session!.user.id,
     },
     include: {
       user: {
@@ -34,7 +30,7 @@ const page = async () => {
         <BackButton />
       </span>
 
-      <h2 className="text-3xl font-semibold">Twoje zapisane posty</h2>
+      <h2 className="text-3xl font-semibold">Twoje posty</h2>
       {savedPosts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}

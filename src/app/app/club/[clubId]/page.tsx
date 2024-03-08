@@ -28,6 +28,7 @@ const page = async ({ params }: Props) => {
         },
       },
       likes: { where: { userId: session!.user.id } },
+      saved: { where: { savedBy: session!.user.id } },
       _count: { select: { likes: true, comments: true } },
     },
     orderBy: { createdAt: "desc" },

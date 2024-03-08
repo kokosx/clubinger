@@ -19,6 +19,7 @@ model User {
   participatantAt ClubParticipant[]
   description String @default("")
 
+  savedPosts SavedPost[]
   favoriteClubs FavoriteClub[]
   chatMessages ChatMessage[]
   createdClubs Club[] @relation("created-club")
@@ -99,9 +100,19 @@ model Post {
   clubId Int
   likes PostLike[]
   comments PostComment[]
+  saved SavedPost[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model SavedPost {
+  savedBy String
+  user User @relation(fields: [savedBy],references: [id],onUpdate: Cascade,onDelete: Cascade)
+  postId Int
+  post Post @relation(fields: [postId],references: [id],onUpdate: Cascade,onDelete: Cascade)
+
+  @@id([postId,savedBy])
 }
 
 model PostLike {
@@ -165,7 +176,7 @@ model ClubParticipant {
   userId String
   user User @relation(fields: [userId],references: [id],onDelete: Cascade,onUpdate: Cascade)
   club Club @relation(fields: [clubId],references: [id],onDelete: Cascade,onUpdate: Cascade)
-
+  userType ClubParticipantType @default(USER)
   createdAt DateTime @default(now())
 
   @@id([userId,clubId])
@@ -229,4 +240,9 @@ model Key {
 enum AvatarMediaType {
   DICEBEAR
   IMAGE
+}
+enum ClubParticipantType {
+  USER
+  MODERATOR
+  ADMIN
 }

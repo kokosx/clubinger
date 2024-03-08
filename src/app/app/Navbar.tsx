@@ -30,6 +30,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import ClubAvatar from "@/components/ClubAvatar";
 import { api } from "../../trpc/react";
 import { toast } from "sonner";
+import SuccessToastIcon from "../../components/SuccessToastIcon";
 
 type Props = {
   session: Session;
@@ -45,7 +46,7 @@ const Navbar = ({ session, clubs }: Props) => {
   const _logout = api.auth.logout.useMutation({
     onSuccess: () => {
       toast("Pomyślnie wylogowano", {
-        icon: <CheckIcon className="text-green-500" />,
+        icon: <SuccessToastIcon />,
       });
       router.push("/");
     },
@@ -156,6 +157,21 @@ const Navbar = ({ session, clubs }: Props) => {
               <DropdownMenuItem>
                 <Link className="w-full" href={`/app/users/${session.user.id}`}>
                   Profil
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link className="w-full" href={`/app/myposts`}>
+                  Moje posty
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link className="w-full" href={`/app/mycomments`}>
+                  Moje komentarze
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link className="w-full" href={`/app/saved`}>
+                  Zapisane
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>

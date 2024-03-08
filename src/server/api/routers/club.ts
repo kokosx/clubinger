@@ -29,6 +29,7 @@ export const clubRouter = createTRPCRouter({
           participants: {
             create: {
               userId: ctx.user.id,
+              userType: "ADMIN",
             },
           },
           avatarMediaType: "DICEBEAR",

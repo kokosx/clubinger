@@ -14,6 +14,7 @@ import CommentButton from "@/components/CommentButton";
 import LikeButton from "@/components/LikeButton";
 import { PostOutputs } from "@/server/api/root";
 import DOMPurify from "isomorphic-dompurify";
+import PostActions from "../../../../components/PostActions";
 
 type Props = {
   post: PostOutputs["getPost"];
@@ -28,26 +29,33 @@ const PostCard = ({ post }: Props) => {
       className="hover:cursor-pointer"
     >
       <CardHeader className="py-1 pt-3">
-        <CardDescription>
-          Utworzone przez{" "}
-          <button
-            className="text-primary underline"
-            onMouseEnter={() => {
-              router.prefetch(`/app/users/${post.user.id}`);
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push(`/app/users/${post.user.id}`);
-            }}
-          >
-            {post.user.username}
-            <UserAvatar
-              className="inline"
-              avatarUrl={post.user.avatarUrl}
-              mediaType={post.user.avatarMediaType}
-            />
-          </button>
-        </CardDescription>
+        <div className="flex justify-between">
+          <CardDescription>
+            Utworzone przez{" "}
+            <button
+              className="text-primary underline"
+              onMouseEnter={() => {
+                router.prefetch(`/app/users/${post.user.id}`);
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(`/app/users/${post.user.id}`);
+              }}
+            >
+              {post.user.username}
+              <UserAvatar
+                className="inline"
+                avatarUrl={post.user.avatarUrl}
+                mediaType={post.user.avatarMediaType}
+              />
+            </button>
+          </CardDescription>
+          <PostActions
+            isInitiallySaved={post.saved.length > 0}
+            postId={post.id}
+          />
+        </div>
+
         <CardTitle className="text-3xl">{post.title}</CardTitle>
       </CardHeader>
       <CardContent className="m-0 ">

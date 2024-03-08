@@ -3,6 +3,7 @@ import {
   addPostSchema,
   getPostSchema,
   likePostSchema,
+  savePostSchema,
 } from "../../../schemas/post";
 import { TRPCError } from "@trpc/server";
 
@@ -53,6 +54,7 @@ export const postRouter = createTRPCRouter({
             },
           },
           likes: { where: { userId: ctx.user.id } },
+          saved: { where: { savedBy: ctx.user.id } },
           _count: { select: { likes: true, comments: true } },
         },
         orderBy: { createdAt: "desc" },
@@ -61,5 +63,36 @@ export const postRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND" });
       }
       return post;
+    }),
+
+  savePost: attendingUserProcedure
+    .input(savePostSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.db.savedPost.create({
+          data: {
+            postId: input.postId,
+            savedBy: ctx.user.id,
+          },
+        });
+        return {};
+      } catch (error) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
+    }),
+  unsavePost: attendingUserProcedure
+    .input(savePostSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.db.savedPost.deleteMany({
+          where: {
+            postId: input.postId,
+            savedBy: ctx.user.id,
+          },
+        });
+        return {};
+      } catch (error) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
     }),
 });

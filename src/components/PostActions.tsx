@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import SuccessToastIcon from "./SuccessToastIcon";
 import ErrorToastIcon from "./ErrorToastIcon";
 import { useState } from "react";
+import { revalidatePathAction } from "../actions/revalidatePathAction";
 
 type Props = {
   postId: number;
@@ -45,9 +46,10 @@ const PostActions = ({ postId, isInitiallySaved }: Props) => {
   const save = () => {
     if (isSaved) {
       _unsavePost.mutate({ clubId: Number(clubId), postId });
-      return;
+    } else {
+      _savePost.mutate({ clubId: Number(clubId), postId });
     }
-    _savePost.mutate({ clubId: Number(clubId), postId });
+    revalidatePathAction("/app/saved", "page");
   };
 
   return (

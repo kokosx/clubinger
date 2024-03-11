@@ -17,20 +17,32 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { chatMessageSchema } from "@/schemas/chat";
+import InputField from "../../../../../../components/InputField";
+import InputError from "../../../../../../components/InputError";
+import { SendHorizonal } from "lucide-react";
+import ChatBubble from "../../../../../../components/ChatBubble";
 
 type Props = {
   clubId: number;
   roomId: number;
+  initialMessages: NewClubMessage[];
+  userId: string;
 };
 
 const formSchema = z.object({
   message: chatMessageSchema,
 });
 
-const ChatBox = ({ clubId, roomId }: Props) => {
+const ChatBox = ({ clubId, roomId, initialMessages, userId }: Props) => {
   const _sendMessage = api.chat.sendClubMessage.useMutation();
-  const [messages, setMessages] = useState<NewClubMessage[]>([]);
-  const { register, handleSubmit, reset } = useForm<typeof formSchema._output>({
+  const [messages, setMessages] = useState<NewClubMessage[]>(initialMessages);
+  const {
+    register,
+    handleSubmit,
+    reset,
+
+    formState: { errors, isValid },
+  } = useForm<typeof formSchema._output>({
     resolver: zodResolver(formSchema),
   });
 
@@ -52,13 +64,23 @@ const ChatBox = ({ clubId, roomId }: Props) => {
   });
 
   return (
-    <div className="flex flex-col">
-      <div></div>
+    <div className="flex h-full flex-col ">
+      <div className=" flex h-[calc(100vh-220px)] w-full flex-col gap-y-1 overflow-y-scroll ">
+        {messages.map((message) => (
+          <ChatBubble message={message} userId={userId} key={message.id} />
+        ))}
+      </div>
       <form onSubmit={onSubmit}>
         <Label htmlFor="message">Twoja wiadomość</Label>
-        <div className="flex items-center gap-x-2">
-          <Textarea {...register("message")} id="message" />
-          <Button className="h-full min-h-full">Wyślij</Button>
+        <div className="mt-auto flex items-center justify-center gap-x-2 ">
+          <InputField>
+            <Textarea {...register("message")} id="message" />
+            <InputError error={errors.message?.message} />
+          </InputField>
+
+          <Button disabled={!isValid} className="space-x-1">
+            <span>Wyślij</span> <SendHorizonal className="h-4" />
+          </Button>
           <TextareaAutosize />
         </div>
       </form>

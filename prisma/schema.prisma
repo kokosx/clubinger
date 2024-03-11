@@ -203,6 +203,9 @@ model ChatMessage {
   roomId Int
   user User @relation(fields: [createdBy],references: [id],onUpdate: Cascade,onDelete: Cascade)
   createdBy String
+
+  createdAt DateTime @default(now())
+
 }
 
 model ClubsLinkedBookGenre {

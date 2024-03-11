@@ -1,4 +1,4 @@
-import { sendClubMessageSchema } from "@/schemas/chat";
+import { createChatRoomSchema, sendClubMessageSchema } from "@/schemas/chat";
 import { attendingUserProcedure, createTRPCRouter } from "../trpc";
 import Pusher from "pusher";
 import { pusherConfig } from "../../../lib/pusher/server";
@@ -7,8 +7,35 @@ import {
   clubChannel,
   newMessageEvent,
 } from "../../../lib/pusher/client";
+import { getGeneralIdSchema } from "../../../schemas/club";
 
 export const chatRouter = createTRPCRouter({
+  getGeneralId: attendingUserProcedure
+    .input(getGeneralIdSchema)
+    .query(async ({ input, ctx }) => {
+      const room = await ctx.db.chatRoom.findFirst({
+        orderBy: {
+          id: "asc",
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      return { id: room!.id };
+    }),
+  createNewChatRoom: attendingUserProcedure
+    .input(createChatRoomSchema)
+    .mutation(async ({ input, ctx }) => {
+      const room = await ctx.db.chatRoom.create({
+        data: {
+          name: input.name,
+          createdBy: ctx.user.id,
+          clubId: input.clubId,
+        },
+      });
+      return { room };
+    }),
   sendClubMessage: attendingUserProcedure
     .input(sendClubMessageSchema)
     .mutation(async ({ ctx, input }) => {

@@ -57,7 +57,6 @@ const ChatBox = ({ clubId, roomId, initialMessages, user }: Props) => {
     const channel = pusher.subscribe(clubChannel(clubId));
 
     channel.bind(newMessageEvent, (data: NewClubMessage) => {
-      console.log(data);
       setMessages((p) => [data, ...p]);
     });
   }, []);
@@ -77,11 +76,9 @@ const ChatBox = ({ clubId, roomId, initialMessages, user }: Props) => {
         {messages.map((message) => (
           <ChatBubble message={message} userId={user.id} key={message.id} />
         ))}
-        {initialMessages
-          .map((message) => (
-            <ChatBubble message={message} userId={user.id} key={message.id} />
-          ))
-          .reverse()}
+        {initialMessages.map((message) => (
+          <ChatBubble message={message} userId={user.id} key={message.id} />
+        ))}
       </div>
       <form onSubmit={onSubmit}>
         <Label htmlFor="message">Twoja wiadomość</Label>

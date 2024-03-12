@@ -17,34 +17,37 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { chatMessageSchema } from "@/schemas/chat";
-import InputField from "../../../../../../components/InputField";
-import InputError from "../../../../../../components/InputError";
+import InputField from "@/components/InputField";
+import InputError from "@/components/InputError";
 import { SendHorizonal } from "lucide-react";
-import ChatBubble from "../../../../../../components/ChatBubble";
+import ChatBubble from "@/components/ChatBubble";
+import { AuthUser } from "../../../../../../lib/auth/auth";
+import LoadingChatBubble from "./LoadingChatBubble";
 
 type Props = {
   clubId: number;
   roomId: number;
   initialMessages: NewClubMessage[];
-  userId: string;
+  user: AuthUser;
 };
 
 const formSchema = z.object({
   message: chatMessageSchema,
 });
 
-const ChatBox = ({ clubId, roomId, initialMessages, userId }: Props) => {
-  const _sendMessage = api.chat.sendClubMessage.useMutation();
-  const [messages, setMessages] = useState<NewClubMessage[]>(initialMessages);
+const ChatBox = ({ clubId, roomId, initialMessages, user }: Props) => {
+  const _sendMessage = api.chat.sendClubMessage.useMutation({});
+  const [messages, setMessages] = useState<NewClubMessage[]>([]);
   const {
     register,
     handleSubmit,
     reset,
-
     formState: { errors, isValid },
   } = useForm<typeof formSchema._output>({
     resolver: zodResolver(formSchema),
   });
+
+  let optimisticId = 0;
 
   useEffect(() => {
     const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
@@ -54,13 +57,13 @@ const ChatBox = ({ clubId, roomId, initialMessages, userId }: Props) => {
     const channel = pusher.subscribe(clubChannel(clubId));
 
     channel.bind(newMessageEvent, (data: NewClubMessage) => {
-      console.log("NEW MESSAGE", data);
+      console.log(data);
       setMessages((p) => [data, ...p]);
     });
   }, []);
 
   const onSubmit = handleSubmit(({ message }) => {
-    _sendMessage.mutate({ message, roomId, clubId });
+    _sendMessage.mutate({ message, roomId, clubId, optimisticId });
     reset();
   });
 
@@ -68,12 +71,15 @@ const ChatBox = ({ clubId, roomId, initialMessages, userId }: Props) => {
     <div className="flex h-full flex-col ">
       <div
         id="chatbox"
-        className=" flex h-[calc(100vh-220px)] w-full flex-col-reverse gap-y-1 overflow-y-scroll "
+        className=" flex h-[calc(100vh-240px)] w-full flex-col-reverse gap-y-1 overflow-y-scroll "
       >
         {/* TODO: Check for solution with reversal */}
-        {messages
+        {messages.map((message) => (
+          <ChatBubble message={message} userId={user.id} key={message.id} />
+        ))}
+        {initialMessages
           .map((message) => (
-            <ChatBubble message={message} userId={userId} key={message.id} />
+            <ChatBubble message={message} userId={user.id} key={message.id} />
           ))
           .reverse()}
       </div>
@@ -85,7 +91,10 @@ const ChatBox = ({ clubId, roomId, initialMessages, userId }: Props) => {
             <InputError error={errors.message?.message} />
           </InputField>
 
-          <Button disabled={!isValid} className="space-x-1">
+          <Button
+            disabled={!isValid || _sendMessage.isLoading}
+            className="space-x-1"
+          >
             <span>Wyślij</span> <SendHorizonal className="h-4" />
           </Button>
           <TextareaAutosize />

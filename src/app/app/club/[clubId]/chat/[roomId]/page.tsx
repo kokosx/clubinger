@@ -18,7 +18,7 @@ const page = async ({ params }: Props) => {
       roomId: Number(params.roomId),
     },
     orderBy: {
-      createdAt: "asc",
+      createdAt: "desc",
     },
     take: 10,
     select: {
@@ -39,7 +39,7 @@ const page = async ({ params }: Props) => {
     <ChatBox
       initialMessages={messages}
       roomId={Number(params.roomId)}
-      userId={session!.user.id}
+      user={session!.user}
       clubId={Number(params.clubId)}
     />
   );

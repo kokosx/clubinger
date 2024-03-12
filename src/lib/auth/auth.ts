@@ -25,6 +25,8 @@ export const auth = lucia({
 
 export type Auth = typeof auth;
 
+export type AuthUser = Awaited<ReturnType<Auth["getUser"]>>;
+
 export const getPageSession = cache((method: "GET" | "POST" = "GET") => {
   const authRequest = auth.handleRequest(method, context);
 

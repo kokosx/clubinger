@@ -67,6 +67,6 @@ export const chatRouter = createTRPCRouter({
 
       pusher.trigger(clubChannel(input.clubId), newMessageEvent, msgToSend);
 
-      return {};
+      return { resolvedId: input.optimisticId };
     }),
 });

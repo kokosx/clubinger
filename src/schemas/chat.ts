@@ -13,4 +13,5 @@ export const sendClubMessageSchema = z.object({
   clubId: z.number(),
   roomId: z.number(),
   message: chatMessageSchema,
+  optimisticId: z.number().optional(),
 });

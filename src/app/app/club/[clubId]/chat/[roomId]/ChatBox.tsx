@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import Pusher from "pusher-js";
 import { env } from "@/env";
 import {
@@ -63,9 +63,17 @@ const ChatBox = ({ clubId, roomId, initialMessages, userId }: Props) => {
     reset();
   });
 
+  useEffect(() => {
+    const chatbox = document.querySelector("#chatbox")!;
+    chatbox.scrollTo({ top: 0 });
+  }, []);
+
   return (
     <div className="flex h-full flex-col ">
-      <div className=" flex h-[calc(100vh-220px)] w-full flex-col gap-y-1 overflow-y-scroll ">
+      <div
+        id="chatbox"
+        className=" flex h-[calc(100vh-220px)] w-full flex-col-reverse gap-y-1 overflow-y-scroll "
+      >
         {messages.map((message) => (
           <ChatBubble message={message} userId={userId} key={message.id} />
         ))}

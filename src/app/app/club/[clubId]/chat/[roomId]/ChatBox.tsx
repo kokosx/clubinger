@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Pusher from "pusher-js";
 import { env } from "@/env";
 import {
@@ -55,6 +55,7 @@ const ChatBox = ({ clubId, roomId, initialMessages, userId }: Props) => {
 
     channel.bind(newMessageEvent, (data: NewClubMessage) => {
       console.log("NEW MESSAGE", data);
+      setMessages((p) => [data, ...p]);
     });
   }, []);
 
@@ -63,20 +64,18 @@ const ChatBox = ({ clubId, roomId, initialMessages, userId }: Props) => {
     reset();
   });
 
-  useEffect(() => {
-    const chatbox = document.querySelector("#chatbox")!;
-    chatbox.scrollTo({ top: 0 });
-  }, []);
-
   return (
     <div className="flex h-full flex-col ">
       <div
         id="chatbox"
         className=" flex h-[calc(100vh-220px)] w-full flex-col-reverse gap-y-1 overflow-y-scroll "
       >
-        {messages.map((message) => (
-          <ChatBubble message={message} userId={userId} key={message.id} />
-        ))}
+        {/* TODO: Check for solution with reversal */}
+        {messages
+          .map((message) => (
+            <ChatBubble message={message} userId={userId} key={message.id} />
+          ))
+          .reverse()}
       </div>
       <form onSubmit={onSubmit}>
         <Label htmlFor="message">Twoja wiadomość</Label>

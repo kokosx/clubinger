@@ -13,11 +13,9 @@ type Props = {
 
 const Rooms = ({ rooms, initialRoom, clubId }: Props) => {
   const [roomId, setRoomId] = useState(initialRoom);
-  console.log(initialRoom);
   return rooms.map((room) => (
-    <Link href={`/app/club/${clubId}/chat/${room.id}`}>
+    <Link key={room.id} href={`/app/club/${clubId}/chat/${room.id}`}>
       <Card
-        key={room.id}
         className={`${room.id === roomId && "border-2 border-primary"} cursor-pointer`}
         onClick={() => {
           setRoomId(room.id);

@@ -32,7 +32,6 @@ const layout = async ({ params, children }: Props) => {
       },
     }),
   ]);
-  console.log(params);
   return (
     <div className="flex h-full min-h-full flex-col gap-y-2">
       <span>

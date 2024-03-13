@@ -3,11 +3,26 @@ import {
   authenticatedProcedure,
   createTRPCRouter,
 } from "@/server/api/trpc";
-import { addClubSchema, favoriteClubSchema } from "@/schemas/club";
+import {
+  addClubSchema,
+  favoriteClubSchema,
+  joinClubSchema,
+} from "@/schemas/club";
 import crypto from "node:crypto";
 import { TRPCError } from "@trpc/server";
 
 export const clubRouter = createTRPCRouter({
+  joinClub: authenticatedProcedure
+    .input(joinClubSchema)
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.clubParticipant.create({
+        data: {
+          userId: ctx.user.id,
+          clubId: input.clubId,
+        },
+      });
+      return {};
+    }),
   createClub: authenticatedProcedure
     .input(addClubSchema)
     .mutation(async ({ ctx, input }) => {
@@ -77,4 +92,60 @@ export const clubRouter = createTRPCRouter({
         throw new TRPCError({ code: "BAD_REQUEST" });
       }
     }),
+  getRecommendedClubs: authenticatedProcedure.query(async ({ ctx }) => {
+    const [bookGenres, musicGenres] = await Promise.all([
+      ctx.db.usersLikedBookGenre.findMany({
+        where: {
+          userId: ctx.user.id,
+        },
+      }),
+      ctx.db.usersLikedMusicGenre.findMany({
+        where: {
+          userId: ctx.user.id,
+        },
+      }),
+    ]);
+
+    return await ctx.db.club.findMany({
+      include: {
+        linkedBookGenres: {
+          include: {
+            bookGenre: true,
+          },
+        },
+        linkedMusicGenres: {
+          include: {
+            musicGenre: true,
+          },
+        },
+        _count: {
+          select: {
+            participants: true,
+          },
+        },
+      },
+      where: {
+        participants: {
+          none: {
+            userId: ctx.user.id,
+          },
+        },
+        linkedBookGenres: {
+          some: {
+            OR: bookGenres.map((v) => ({ bookGenreId: v.bookGenreId })),
+          },
+        },
+        linkedMusicGenres: {
+          some: {
+            OR: musicGenres.map((v) => ({ musicGenreId: v.musicGenreId })),
+          },
+        },
+      },
+      orderBy: {
+        participants: {
+          _count: "desc",
+        },
+      },
+    });
+  }),
 });

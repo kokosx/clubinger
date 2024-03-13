@@ -1,6 +1,4 @@
-"use client";
-
-import { RouterOutputs } from "@/trpc/shared";
+import { Club } from "@prisma/client";
 import {
   Card,
   CardContent,
@@ -8,25 +6,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { api } from "@/trpc/react";
-import { useRouter } from "next/navigation";
-import { revalidatePathAction } from "@/actions/revalidatePathAction";
-import { toast } from "sonner";
-import SuccessToastIcon from "@/components/SuccessToastIcon";
 import { useState } from "react";
-import ErrorToastIcon from "../../../components/ErrorToastIcon";
+import { api } from "../../../trpc/react";
+import { toast } from "sonner";
+import { useParams } from "next/navigation";
+import SuccessToastIcon from "@/components/SuccessToastIcon";
+import ErrorToastIcon from "@/components/ErrorToastIcon";
 import Link from "next/link";
+import { Button, buttonVariants } from "../../../components/ui/button";
 import { cn } from "../../../lib/utils";
+import { RouterOutputs } from "../../../trpc/shared";
 
 type Props = {
-  club: RouterOutputs["club"]["getRecommendedClubs"][0];
+  club: RouterOutputs["club"]["search"][0];
 };
 
-const RecommendedClubCard = ({ club }: Props) => {
-  const router = useRouter();
+const ClubSearchCard = ({ club }: Props) => {
+  const [didJoin, setDidJoin] = useState(club.participants.length > 0);
 
-  const [didJoin, setDidJoin] = useState(false);
+  const { clubId }: { clubId: string } = useParams();
 
   const _joinClub = api.club.joinClub.useMutation({
     async onSuccess() {
@@ -39,7 +37,7 @@ const RecommendedClubCard = ({ club }: Props) => {
   });
 
   const joinClub = () => {
-    _joinClub.mutate({ clubId: club.id });
+    _joinClub.mutate({ clubId: Number(clubId) });
   };
 
   return (
@@ -48,7 +46,7 @@ const RecommendedClubCard = ({ club }: Props) => {
         <CardTitle>{club.name}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="max-w-full break-words">{club.description}</p>
+        <p className="max-w-full break-words  ">{club.description}</p>
       </CardContent>
       <CardFooter>
         <span>{club._count.participants} członków</span>
@@ -73,4 +71,4 @@ const RecommendedClubCard = ({ club }: Props) => {
   );
 };
 
-export default RecommendedClubCard;
+export default ClubSearchCard;

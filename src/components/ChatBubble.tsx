@@ -45,7 +45,7 @@ const ChatBubble = ({ message, userId }: Props) => {
         </HoverCardContent>
       </HoverCard>
 
-      <p>{message.message}</p>
+      <p className="text-wrap break-words">{message.message}</p>
     </div>
   );
 };

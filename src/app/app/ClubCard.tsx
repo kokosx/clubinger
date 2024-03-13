@@ -30,7 +30,7 @@ const ClubCard = ({ club, isFavorite = false }: Props) => {
           </div>
         </CardHeader>
         <CardContent>
-          <p>{club.description}</p>
+          <p className="text-wrap break-words">{club.description}</p>
         </CardContent>
       </Card>
     </Link>

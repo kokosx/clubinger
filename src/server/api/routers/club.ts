@@ -10,8 +10,40 @@ import {
 } from "@/schemas/club";
 import crypto from "node:crypto";
 import { TRPCError } from "@trpc/server";
+import { simpleSearchSchema } from "@/schemas/search";
 
 export const clubRouter = createTRPCRouter({
+  search: authenticatedProcedure
+    .input(simpleSearchSchema)
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.club.findMany({
+        where: {
+          name: {
+            contains: input.value,
+          },
+        },
+
+        include: {
+          participants: {
+            where: {
+              userId: ctx.user.id,
+            },
+            select: { clubId: true },
+          },
+          _count: {
+            select: {
+              participants: true,
+            },
+          },
+        },
+
+        orderBy: {
+          participants: {
+            _count: "desc",
+          },
+        },
+      });
+    }),
   joinClub: authenticatedProcedure
     .input(joinClubSchema)
     .mutation(async ({ ctx, input }) => {

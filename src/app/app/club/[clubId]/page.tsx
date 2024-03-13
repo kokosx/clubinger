@@ -4,6 +4,8 @@ import { db } from "../../../../server/db";
 import AddPostCard from "./AddPostCard";
 import PostCard from "./PostCard";
 import ChatLink from "./ChatLink";
+import Link from "next/link";
+import { Card, CardHeader, CardTitle } from "../../../../components/ui/card";
 
 type Props = {
   params: {
@@ -36,6 +38,19 @@ const page = async ({ params }: Props) => {
 
   return (
     <div className="mx-auto mb-20 flex w-full flex-col gap-y-2 md:w-[65%] lg:w-[55%] xl:w-[45%]">
+      <div className="flex w-full gap-x-2">
+        <ChatLink clubId={params.clubId} />
+        <Link
+          className="h-52 w-full"
+          href={`/app/club/${params.clubId}/videochat`}
+        >
+          <Card className=" h-52 w-full  rounded-md border-primary">
+            <CardHeader>
+              <CardTitle>Chat video</CardTitle>
+            </CardHeader>
+          </Card>
+        </Link>
+      </div>
       <ChatLink clubId={params.clubId} />
       <AddPostCard clubId={params.clubId} />
 

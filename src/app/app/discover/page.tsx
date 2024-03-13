@@ -1,8 +1,14 @@
 import BackButton from "../../../components/BackButton";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../../components/ui/card";
 import { getSession } from "../../../lib/auth/utils";
 import { db } from "../../../server/db";
-import PostCard from "../club/[clubId]/PostCard";
-import RecommendedClubCard from "./RecommendedClubCard";
+import RecommendedClubCard from "./DiscoveryClubCard";
 
 const page = async () => {
   const session = await getSession();
@@ -34,9 +40,9 @@ const page = async () => {
       },
       _count: {
         select: {
-          participants:true
-        }
-      }
+          participants: true,
+        },
+      },
     },
     where: {
       participants: {
@@ -60,7 +66,6 @@ const page = async () => {
         _count: "desc",
       },
     },
-    
   });
 
   return (
@@ -72,6 +77,16 @@ const page = async () => {
         {recommended.map((club) => (
           <RecommendedClubCard club={club} key={club.id} />
         ))}
+        {recommended.length === 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Pusto tu!</CardTitle>
+            </CardHeader>
+            <CardContent>
+              Niestety nie ma klubów odpowiadających twoim zainteresowaniom
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

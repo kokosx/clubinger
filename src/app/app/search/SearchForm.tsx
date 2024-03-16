@@ -10,6 +10,7 @@ import { simpleSearchSchema } from "@/schemas/search";
 import { api } from "../../../trpc/react";
 import { FormEvent, useState } from "react";
 import ClubSearchCard from "./ClubSearchCard";
+import { SearchIcon } from "lucide-react";
 
 type Form = typeof simpleSearchSchema._output;
 
@@ -23,7 +24,7 @@ const SearchForm = () => {
   } = useForm<Form>({ resolver: zodResolver(simpleSearchSchema) });
   //FIXME: To be fixed so that it doesnt need to be used, should use form values instead
   const [value, _setValue] = useState("");
-  //FIXME: Fix this:
+  //FIXME: Fix this:3
   const _searchClubs = api.club.search.useQuery(
     { value },
     {
@@ -41,17 +42,22 @@ const SearchForm = () => {
   return (
     <>
       <form onSubmit={onSubmit}>
-        <InputField>
-          <Input
-            value={getValues("value")}
-            onChange={(e) => {
-              setValue("value", e.target.value);
-              _setValue(e.target.value);
-            }}
-          />
-          <InputError error={errors.value?.message} />
-        </InputField>
-        <Button>Wyszukaj</Button>
+        <div className="flex gap-x-2">
+          <InputField>
+            <Input
+              value={getValues("value")}
+              onChange={(e) => {
+                setValue("value", e.target.value);
+                _setValue(e.target.value);
+              }}
+            />
+            <InputError error={errors.value?.message} />
+          </InputField>
+          <Button>
+            <SearchIcon />
+            <span>Wyszukaj</span>
+          </Button>
+        </div>
       </form>
       <div className="mx-auto mb-20 flex w-full flex-col gap-y-2 md:w-[65%] lg:w-[55%] xl:w-[45%]">
         {_searchClubs.data?.map((club) => (

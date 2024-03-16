@@ -12,7 +12,9 @@ type Props = {
 const layout = ({ searchParams }: Props) => {
   return (
     <div className="flex flex-col gap-y-2">
-      <h2 className="text-3xl font-medium">Wyszukaj</h2>
+      <h2 className="text-3xl font-medium">Wyszukaj kluby</h2>
+      {/*
+        TODO: Add more filters and user search
       <Tabs defaultValue={searchParams.type}>
         <TabsList>
           <Link href="/app/search?type=clubs">
@@ -24,6 +26,7 @@ const layout = ({ searchParams }: Props) => {
           </Link>
         </TabsList>
       </Tabs>
+      <SearchForm /> */}
       <SearchForm />
     </div>
   );

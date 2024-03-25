@@ -170,6 +170,11 @@ const Navbar = ({ session, clubs }: Props) => {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
+                <Link className="w-full" href={`/app/myclubs`}>
+                  Moje kluby
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
                 <Link className="w-full" href={`/app/saved`}>
                   Zapisane
                 </Link>

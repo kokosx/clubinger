@@ -103,6 +103,7 @@ model Post {
   comments PostComment[]
   saved SavedPost[]
 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -235,6 +236,8 @@ model FavoriteClub {
   @@id([clubId,userId])
 }
 
+
+
 model Session {
   id             String @id @unique
   user_id        String
@@ -245,6 +248,8 @@ model Session {
   @@index([user_id])
 }
 
+
+
 model Key {
   id              String  @id @unique
   hashed_password String?
@@ -253,6 +258,8 @@ model Key {
 
   @@index([user_id])
 }
+
+
 
 enum AvatarMediaType {
   DICEBEAR

@@ -26,3 +26,7 @@ export const favoriteClubSchema = z.object({
 export const getGeneralIdSchema = z.object({
   clubId: z.number(),
 });
+
+export const leaveClubSchema = z.object({
+  clubId: z.number(),
+});

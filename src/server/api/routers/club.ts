@@ -7,6 +7,7 @@ import {
   addClubSchema,
   favoriteClubSchema,
   joinClubSchema,
+  leaveClubSchema,
 } from "@/schemas/club";
 import crypto from "node:crypto";
 import { TRPCError } from "@trpc/server";
@@ -43,6 +44,17 @@ export const clubRouter = createTRPCRouter({
           },
         },
       });
+    }),
+  leaveClub: authenticatedProcedure
+    .input(leaveClubSchema)
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.clubParticipant.deleteMany({
+        where: {
+          clubId: input.clubId,
+          userId: ctx.user.id,
+        },
+      });
+      return {};
     }),
   joinClub: authenticatedProcedure
     .input(joinClubSchema)

@@ -24,7 +24,10 @@ const ChatLink = ({ clubId }: Props) => {
   }
 
   return (
-    <Link href={`/app/club/${clubId}/chat/${_getGeneral.data?.id}`}>
+    <Link
+      className="w-full"
+      href={`/app/club/${clubId}/chat/${_getGeneral.data?.id}`}
+    >
       <Card className="h-52 w-full border-primary">
         <CardHeader>
           <CardTitle className="flex gap-x-2">
@@ -32,8 +35,8 @@ const ChatLink = ({ clubId }: Props) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-y-4">
-          <Skeleton className="block h-12 w-[35%] animate-none" />
-          <Skeleton className="block h-12 w-[40%] animate-none self-end" />
+          <Skeleton className="block h-6 w-[35%] animate-none" />
+          <Skeleton className="block h-6 w-[40%] animate-none self-end" />
         </CardContent>
       </Card>
     </Link>

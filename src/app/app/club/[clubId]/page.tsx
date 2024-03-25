@@ -40,7 +40,7 @@ const page = async ({ params }: Props) => {
     <div className="mx-auto mb-20 flex w-full flex-col gap-y-2 md:w-[65%] lg:w-[55%] xl:w-[45%]">
       <div className="flex w-full gap-x-2">
         <ChatLink clubId={params.clubId} />
-        <Link
+        {/* <Link
           className="h-52 w-full"
           href={`/app/club/${params.clubId}/videochat`}
         >
@@ -49,9 +49,9 @@ const page = async ({ params }: Props) => {
               <CardTitle>Chat video</CardTitle>
             </CardHeader>
           </Card>
-        </Link>
+        </Link> */}
       </div>
-      <ChatLink clubId={params.clubId} />
+
       <AddPostCard clubId={params.clubId} />
 
       {posts.map((post) => (

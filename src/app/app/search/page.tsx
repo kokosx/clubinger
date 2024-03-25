@@ -1,4 +1,3 @@
-import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import SearchForm from "./SearchForm";

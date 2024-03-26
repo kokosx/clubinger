@@ -16,6 +16,7 @@ import { useState } from "react";
 import ErrorToastIcon from "../../../components/ErrorToastIcon";
 import Link from "next/link";
 import { cn } from "../../../lib/utils";
+import { revalidatePathAction } from "../../../actions/revalidatePathAction";
 
 type Props = {
   club: RouterOutputs["club"]["getRecommendedClubs"][0];
@@ -28,6 +29,7 @@ const RecommendedClubCard = ({ club }: Props) => {
     async onSuccess() {
       toast("Dołączono pomyślnie!", { icon: <SuccessToastIcon /> });
       setDidJoin(true);
+      revalidatePathAction("/");
     },
     onError() {
       toast("Wystąpił błąd", { icon: <ErrorToastIcon /> });

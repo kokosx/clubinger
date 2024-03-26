@@ -30,3 +30,7 @@ export const getGeneralIdSchema = z.object({
 export const leaveClubSchema = z.object({
   clubId: z.number(),
 });
+
+export const deleteClubSchema = z.object({
+  clubId: z.number(),
+});

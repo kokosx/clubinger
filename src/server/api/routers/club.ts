@@ -56,6 +56,20 @@ export const clubRouter = createTRPCRouter({
       });
       return {};
     }),
+  deleteClub: attendingUserProcedure
+    .input(leaveClubSchema)
+    .mutation(async ({ input, ctx }) => {
+      try {
+        await ctx.db.club.delete({
+          where: {
+            id: input.clubId,
+          },
+        });
+        return {};
+      } catch (error) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
+    }),
   joinClub: authenticatedProcedure
     .input(joinClubSchema)
     .mutation(async ({ ctx, input }) => {

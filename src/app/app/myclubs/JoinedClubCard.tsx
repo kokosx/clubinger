@@ -2,25 +2,16 @@
 
 import { type ClubParticipantType, type Club } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import SuccessToastIcon from "@/components/SuccessToastIcon";
 import { revalidatePathAction } from "@/actions/revalidatePathAction";
-import { LoadingButton } from "@/components/LoadingButton";
-import { AlertDialogDescription } from "@radix-ui/react-alert-dialog";
+import ActionClubButton from "./ActionClubButton";
+import ErrorToastIcon from "../../../components/ErrorToastIcon";
 
 type Props = {
   club: Club & {
@@ -41,14 +32,38 @@ const JoinedClubCard = ({ club }: Props) => {
       revalidatePathAction("/", "layout");
       setIsLeaveDialogOpen(false);
     },
+    onError() {
+      toast("Coś poszło nie tak!", { icon: <ErrorToastIcon /> });
+      setIsLeaveDialogOpen(false);
+    },
+  });
+
+  const _deleteClub = api.club.deleteClub.useMutation({
+    onSuccess() {
+      toast("Pomyślnie usunięto klub", {
+        icon: <SuccessToastIcon />,
+      });
+      revalidatePathAction("/", "layout");
+      setIsLeaveDialogOpen(false);
+    },
+    onError() {
+      toast("Coś poszło nie tak!", { icon: <ErrorToastIcon /> });
+      setIsLeaveDialogOpen(false);
+    },
   });
 
   const handleLeave = () => {
     _leaveClub.mutate({ clubId: club.id });
   };
 
+  const handleDelete = () => {
+    _deleteClub.mutate({ clubId: club.id });
+  };
+
+  const openDialog = () => setIsLeaveDialogOpen(true);
+  const closeDialog = () => setIsLeaveDialogOpen(false);
+
   const getUserType = () => {
-    console.log(club.participants[0]);
     switch (club.participants[0]!.userType) {
       case "ADMIN":
         return "Admin";
@@ -66,35 +81,28 @@ const JoinedClubCard = ({ club }: Props) => {
         <span>{getUserType()}</span>
       </CardHeader>
       <CardContent className="flex gap-x-2">
-        <AlertDialog open={isLeaveDialogOpen}>
-          <AlertDialogTrigger asChild>
-            <Button
-              onClick={() => setIsLeaveDialogOpen(true)}
-              variant={"destructive"}
-            >
-              Odejdź z klubu
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Czy jesteś pewien?</AlertDialogTitle>
-            </AlertDialogHeader>
+        {club.participants[0]?.userType === "ADMIN" ? (
+          <ActionClubButton
+            closeDialog={closeDialog}
+            isLoading={_deleteClub.isLoading}
+            isOpen={isLeaveDialogOpen}
+            onAccept={handleDelete}
+            openDialog={openDialog}
+          >
+            Usuń klub
+          </ActionClubButton>
+        ) : (
+          <ActionClubButton
+            closeDialog={closeDialog}
+            isLoading={_leaveClub.isLoading}
+            isOpen={isLeaveDialogOpen}
+            onAccept={handleLeave}
+            openDialog={openDialog}
+          >
+            Odejdź z klubu
+          </ActionClubButton>
+        )}
 
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setIsLeaveDialogOpen(false)}>
-                Anuluj
-              </AlertDialogCancel>
-
-              <LoadingButton
-                loading={_leaveClub.isLoading}
-                onClick={handleLeave}
-                variant={"destructive"}
-              >
-                Odejdź
-              </LoadingButton>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
         <Link href={`/app/club/${club.id}`} className={cn(buttonVariants())}>
           Przejdź
         </Link>

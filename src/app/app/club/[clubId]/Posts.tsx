@@ -2,12 +2,13 @@
 
 import { PostOutputs } from "@/server/api/root";
 import PostCard from "./PostCard";
-import { api } from "../../../../trpc/react";
+import { api } from "@/trpc/react";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import ErrorToastIcon from "../../../../components/ErrorToastIcon";
+import ErrorToastIcon from "@/components/ErrorToastIcon";
 import { Card } from "@/components/ui/card";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { useOnScrollDown } from "@/lib/hooks/useOnScrollDown";
 
 type Props = {
   initialPosts: PostOutputs["getNewestPosts"]["items"];
@@ -39,25 +40,8 @@ const Posts = ({ initialPosts, clubId, initialCursor }: Props) => {
     }
   };
 
-  const handleScroll = () => {
-    const threshold = 0;
-
-    const bottom =
-      document.documentElement.offsetHeight -
-        (document.documentElement.scrollTop + threshold) ===
-      document.documentElement.clientHeight;
-
-    if (bottom) {
-      refetchNewestPosts();
-    }
-  };
   //FIXME: scrolling is not working after page reload
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+  useOnScrollDown(refetchNewestPosts);
 
   const renderFetchedPosts = () => {
     const posts: PostOutputs["getNewestPosts"]["items"] = [];

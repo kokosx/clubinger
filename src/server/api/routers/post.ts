@@ -1,7 +1,7 @@
 import { attendingUserProcedure, createTRPCRouter } from "../trpc";
 import {
   addPostSchema,
-  getPostSchema,
+  getNewestPostsSchema,
   likePostSchema,
   savePostSchema,
 } from "../../../schemas/post";
@@ -39,32 +39,69 @@ export const postRouter = createTRPCRouter({
 
       return {};
     }),
-  getPost: attendingUserProcedure
-    .input(getPostSchema)
+  // getPost: attendingUserProcedure
+  //   .input(getPostSchema)
+  //   .query(async ({ ctx, input }) => {
+  //     const post = await ctx.db.post.findFirst({
+  //       where: { id: input.postId },
+  //       include: {
+  //         user: {
+  //           select: {
+  //             username: true,
+  //             id: true,
+  //             avatarMediaType: true,
+  //             avatarUrl: true,
+  //           },
+  //         },
+  //         likes: { where: { userId: ctx.user.id } },
+  //         saved: { where: { savedBy: ctx.user.id } },
+  //         _count: { select: { likes: true, comments: true } },
+  //       },
+  //       orderBy: { createdAt: "desc" },
+  //     });
+  //     if (!post) {
+  //       throw new TRPCError({ code: "NOT_FOUND" });
+  //     }
+  //     return post;
+  //   }),
+  getNewestPosts: attendingUserProcedure
+    .input(getNewestPostsSchema)
     .query(async ({ ctx, input }) => {
-      const post = await ctx.db.post.findFirst({
-        where: { id: input.postId },
-        include: {
-          user: {
-            select: {
-              username: true,
-              id: true,
-              avatarMediaType: true,
-              avatarUrl: true,
+      try {
+        const items = await ctx.db.post.findMany({
+          where: { clubId: Number(input.clubId) },
+          include: {
+            user: {
+              select: {
+                username: true,
+                id: true,
+                avatarMediaType: true,
+                avatarUrl: true,
+              },
             },
-          },
-          likes: { where: { userId: ctx.user.id } },
-          saved: { where: { savedBy: ctx.user.id } },
-          _count: { select: { likes: true, comments: true } },
-        },
-        orderBy: { createdAt: "desc" },
-      });
-      if (!post) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
-      return post;
-    }),
 
+            likes: { where: { userId: ctx.user.id } },
+            saved: { where: { savedBy: ctx.user.id } },
+            _count: { select: { likes: true, comments: true } },
+          },
+
+          orderBy: { id: "desc" },
+          take: input.limit + 1,
+          cursor: input.cursor ? { id: input.cursor } : undefined,
+        });
+        let nextCursor: typeof input.cursor | undefined = undefined;
+        if (items.length > input.limit) {
+          const nextItem = items.pop();
+          nextCursor = nextItem!.id;
+        }
+        return {
+          items,
+          nextCursor,
+        };
+      } catch (error) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
+    }),
   savePost: attendingUserProcedure
     .input(savePostSchema)
     .mutation(async ({ ctx, input }) => {

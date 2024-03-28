@@ -14,10 +14,10 @@ import CommentButton from "@/components/CommentButton";
 import LikeButton from "@/components/LikeButton";
 import { PostOutputs } from "@/server/api/root";
 import DOMPurify from "isomorphic-dompurify";
-import PostActions from "../../../../components/PostActions";
+import PostActions from "@/components/PostActions";
 
 type Props = {
-  post: PostOutputs["getPost"];
+  post: PostOutputs["getNewestPosts"]["items"][0];
 };
 
 const PostCard = ({ post }: Props) => {

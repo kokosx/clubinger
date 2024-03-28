@@ -29,7 +29,7 @@ const RecommendedClubCard = ({ club }: Props) => {
     async onSuccess() {
       toast("Dołączono pomyślnie!", { icon: <SuccessToastIcon /> });
       setDidJoin(true);
-      revalidatePathAction("/");
+      revalidatePathAction("/app", "layout");
     },
     onError() {
       toast("Wystąpił błąd", { icon: <ErrorToastIcon /> });

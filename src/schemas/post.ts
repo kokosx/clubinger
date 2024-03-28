@@ -10,6 +10,12 @@ export const addPostSchema = z.object({
   clubId: z.number(),
 });
 
+export const getNewestPostsSchema = z.object({
+  clubId: z.number(),
+  cursor: z.number().nullish(),
+  limit: z.number().default(5),
+});
+
 export const likePostSchema = z.object({
   postId: z.number(),
   clubId: z.number(),

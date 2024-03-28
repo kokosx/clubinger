@@ -1,11 +1,9 @@
-import { getSession } from "../../../../lib/auth/utils";
-import { PostOutputs } from "../../../../server/api/root";
-import { db } from "../../../../server/db";
+import { getSession } from "@/lib/auth/utils";
+import { PostOutputs } from "@/server/api/root";
+import { db } from "@/server/db";
 import AddPostCard from "./AddPostCard";
-import PostCard from "./PostCard";
 import ChatLink from "./ChatLink";
-import Link from "next/link";
-import { Card, CardHeader, CardTitle } from "../../../../components/ui/card";
+import Posts from "./Posts";
 
 type Props = {
   params: {
@@ -13,7 +11,7 @@ type Props = {
   };
 };
 
-type GetPostResult = PostOutputs["getPost"];
+type GetPostResult = PostOutputs["getNewestPosts"]["items"][0];
 
 const page = async ({ params }: Props) => {
   const session = await getSession();
@@ -33,8 +31,14 @@ const page = async ({ params }: Props) => {
       saved: { where: { savedBy: session!.user.id } },
       _count: { select: { likes: true, comments: true } },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: { id: "desc" },
+    take: 6,
   });
+
+  const nextCursor = posts[5]?.id;
+  if (nextCursor) {
+    posts.pop();
+  }
 
   return (
     <div className="mx-auto mb-20 flex w-full flex-col gap-y-2 md:w-[65%] lg:w-[55%] xl:w-[45%]">
@@ -54,9 +58,11 @@ const page = async ({ params }: Props) => {
 
       <AddPostCard clubId={params.clubId} />
 
-      {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
-      ))}
+      <Posts
+        initialCursor={nextCursor}
+        clubId={Number(params.clubId)}
+        initialPosts={posts}
+      />
     </div>
   );
 };

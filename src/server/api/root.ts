@@ -29,6 +29,7 @@ export const appRouter = createTRPCRouter({
 export type AppRouter = typeof appRouter;
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 export type PostOutputs = RouterOutputs["post"];
+export type ClubOutputs = RouterOutputs["club"];
 
 // const createCaller = createCallerFactory();
 // export const serverCaller = createCaller(appRouter)(await createContext());

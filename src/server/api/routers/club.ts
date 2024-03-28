@@ -45,6 +45,7 @@ export const clubRouter = createTRPCRouter({
         },
       });
     }),
+
   leaveClub: authenticatedProcedure
     .input(leaveClubSchema)
     .mutation(async ({ ctx, input }) => {
@@ -56,6 +57,7 @@ export const clubRouter = createTRPCRouter({
       });
       return {};
     }),
+
   deleteClub: attendingUserProcedure
     .input(leaveClubSchema)
     .mutation(async ({ input, ctx }) => {

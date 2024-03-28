@@ -14,6 +14,7 @@ import { api } from "@/trpc/react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import BackButton from "@/components/BackButton";
+import { revalidatePathAction } from "@/actions/revalidatePathAction";
 
 const page = () => {
   const { clubId } = useParams();
@@ -21,6 +22,7 @@ const page = () => {
 
   const _addPost = api.post.addPost.useMutation({
     onSuccess: ({ post }) => {
+      revalidatePathAction(`/app/club/${post.clubId}`);
       router.push(`/app/club/${post.clubId}/posts/${post.id}`);
       toast("Udało się utworzyć post!");
     },
@@ -40,7 +42,6 @@ const page = () => {
 
   const onSubmit = handleSubmit(
     (data) => {
-      console.log("AAAAAA");
       _addPost.mutate({
         title: data.title,
         description: content,

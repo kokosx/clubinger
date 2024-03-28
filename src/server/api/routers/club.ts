@@ -47,7 +47,7 @@ export const clubRouter = createTRPCRouter({
         },
       });
     }),
-
+  //FIXME: make it so that the cursor is not the club id
   getJoinedClubs: authenticatedProcedure
     .input(getJoinedClubsSchema)
     .query(async ({ ctx, input }) => {
@@ -66,6 +66,10 @@ export const clubRouter = createTRPCRouter({
                 userType: true,
               },
             },
+          },
+          cursor: input.cursor ? { id: input.cursor } : undefined,
+          orderBy: {
+            id: "desc",
           },
         });
         return sendPagination<typeof items>({

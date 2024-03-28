@@ -1,4 +1,8 @@
-import { attendingUserProcedure, createTRPCRouter } from "../trpc";
+import {
+  attendingUserProcedure,
+  createTRPCRouter,
+  sendPagination,
+} from "../trpc";
 import {
   addPostSchema,
   getNewestPostsSchema,
@@ -89,15 +93,11 @@ export const postRouter = createTRPCRouter({
           take: input.limit + 1,
           cursor: input.cursor ? { id: input.cursor } : undefined,
         });
-        let nextCursor: typeof input.cursor | undefined = undefined;
-        if (items.length > input.limit) {
-          const nextItem = items.pop();
-          nextCursor = nextItem!.id;
-        }
-        return {
+        return sendPagination({
           items,
-          nextCursor,
-        };
+          cursor: input.cursor,
+          limit: input.limit,
+        });
       } catch (error) {
         throw new TRPCError({ code: "BAD_REQUEST" });
       }

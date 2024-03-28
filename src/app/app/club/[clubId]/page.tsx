@@ -4,6 +4,7 @@ import { db } from "@/server/db";
 import AddPostCard from "./AddPostCard";
 import ChatLink from "./ChatLink";
 import Posts from "./Posts";
+import { DEFAULT_PAGINATION_TAKE } from "@/schemas";
 
 type Props = {
   params: {
@@ -32,7 +33,8 @@ const page = async ({ params }: Props) => {
       _count: { select: { likes: true, comments: true } },
     },
     orderBy: { id: "desc" },
-    take: 6,
+    //Takes one more post to get the next cursor
+    take: DEFAULT_PAGINATION_TAKE + 1,
   });
 
   const nextCursor = posts[5]?.id;

@@ -2,10 +2,12 @@ import {
   attendingUserProcedure,
   authenticatedProcedure,
   createTRPCRouter,
+  sendPagination,
 } from "@/server/api/trpc";
 import {
   addClubSchema,
   favoriteClubSchema,
+  getJoinedClubsSchema,
   joinClubSchema,
   leaveClubSchema,
 } from "@/schemas/club";
@@ -44,6 +46,36 @@ export const clubRouter = createTRPCRouter({
           },
         },
       });
+    }),
+
+  getJoinedClubs: authenticatedProcedure
+    .input(getJoinedClubsSchema)
+    .query(async ({ ctx, input }) => {
+      try {
+        const items = await ctx.db.club.findMany({
+          where: {
+            participants: {
+              some: {
+                userId: ctx.user.id,
+              },
+            },
+          },
+          include: {
+            participants: {
+              select: {
+                userType: true,
+              },
+            },
+          },
+        });
+        return sendPagination<typeof items>({
+          items,
+          limit: input.limit,
+          cursor: input.cursor,
+        });
+      } catch (error) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
     }),
 
   leaveClub: authenticatedProcedure

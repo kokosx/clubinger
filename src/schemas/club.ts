@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { schemaWithPagination } from ".";
 
 const clubNameSchema = z.string().min(3).max(20);
 const clubNameDescription = z.string().default("");
@@ -14,6 +15,8 @@ export const addClubFormSchema = z.object({
   name: z.string().min(3).max(20),
   description: clubNameDescription,
 });
+
+export const getJoinedClubsSchema = schemaWithPagination(z.object({}));
 
 export const joinClubSchema = z.object({
   clubId: z.number(),

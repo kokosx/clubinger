@@ -123,3 +123,28 @@ export const authenticatedProcedure = publicProcedure.use(isAuthenticated);
 export const attendingUserProcedure = authenticatedProcedure.use(
   authorizeClubAttendee,
 );
+
+type SendPaginationProps<T> = {
+  items: T &
+    {
+      id: number;
+    }[];
+  cursor?: number | null;
+  limit: number;
+};
+
+export const sendPagination = <T>({
+  items,
+  cursor,
+  limit,
+}: SendPaginationProps<T>) => {
+  let nextCursor: typeof cursor | undefined = undefined;
+  if (items.length > limit) {
+    const nextItem = items.pop();
+    nextCursor = nextItem!.id;
+  }
+  return {
+    items,
+    nextCursor,
+  };
+};

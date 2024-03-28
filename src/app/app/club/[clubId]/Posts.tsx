@@ -23,6 +23,15 @@ const Posts = ({ initialPosts, clubId, initialCursor }: Props) => {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
       initialCursor,
       enabled: false,
+      initialData: {
+        pageParams: [],
+        pages: [
+          {
+            items: initialPosts,
+            nextCursor: initialCursor,
+          },
+        ],
+      },
     },
   );
 
@@ -55,10 +64,6 @@ const Posts = ({ initialPosts, clubId, initialCursor }: Props) => {
 
   return (
     <div className="flex flex-col gap-y-2">
-      {initialPosts.map((post) => (
-        <PostCard key={post.id} post={post} />
-      ))}
-
       {renderFetchedPosts().map((post) => (
         <PostCard key={post.id} post={post} />
       ))}

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { schemaWithPagination } from ".";
 
 export const MAX_DESCRIPTION_LENGTH = 3000;
 const OVER_3MB_IN_CHARS = 4000000;
@@ -10,11 +11,11 @@ export const addPostSchema = z.object({
   clubId: z.number(),
 });
 
-export const getNewestPostsSchema = z.object({
-  clubId: z.number(),
-  cursor: z.number().nullish(),
-  limit: z.number().default(5),
-});
+export const getNewestPostsSchema = schemaWithPagination(
+  z.object({
+    clubId: z.number(),
+  }),
+);
 
 export const likePostSchema = z.object({
   postId: z.number(),

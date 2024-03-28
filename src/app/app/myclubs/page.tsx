@@ -29,9 +29,6 @@ const page = async () => {
       <span>
         <BackButton />
       </span>
-      {clubs.map((club) => (
-        <JoinedClubCard club={club} key={club.id} />
-      ))}
     </div>
   );
 };

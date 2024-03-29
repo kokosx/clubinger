@@ -6,6 +6,8 @@ import { Card, CardHeader, CardTitle } from "../../../../components/ui/card";
 import PostCard from "../../club/[clubId]/PostCard";
 import { LockIcon } from "lucide-react";
 import { Separator } from "../../../../components/ui/separator";
+import { DEFAULT_GET_USERS_POSTS_TAKE } from "../../../../schemas/post";
+import UsersPosts from "./UsersPosts";
 
 type Props = {
   params: {
@@ -16,13 +18,17 @@ type Props = {
 const page = async ({ params }: Props) => {
   const session = await getSession();
 
-  //TODO: Add pagination
   const user = await db.user.findFirst({
     where: {
       id: params.userId,
     },
+
     include: {
       createdPosts: {
+        orderBy: {
+          id: "desc",
+        },
+        take: DEFAULT_GET_USERS_POSTS_TAKE + 1,
         where: {
           club: {
             participants: {
@@ -43,10 +49,17 @@ const page = async ({ params }: Props) => {
           },
           likes: { where: { userId: session!.user.id } },
           _count: { select: { likes: true, comments: true } },
+          saved: true,
         },
       },
     },
   });
+
+  const initialCursor = user?.createdPosts[DEFAULT_GET_USERS_POSTS_TAKE]?.id;
+  if (initialCursor) {
+    user.createdPosts.pop();
+  }
+
   if (!user) notFound();
   return (
     <div className="flex flex-col gap-x-4 gap-y-2 lg:flex-row">
@@ -76,9 +89,11 @@ const page = async ({ params }: Props) => {
           </div>
           <Separator className="w-0 md:w-24" />
         </div>
-        {user.createdPosts.map((post) => (
-          <PostCard post={post} />
-        ))}
+        <UsersPosts
+          initialPosts={user.createdPosts}
+          userId={params.userId}
+          initialCursor={initialCursor}
+        />
       </div>
     </div>
   );

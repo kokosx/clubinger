@@ -2,6 +2,7 @@ import { z } from "zod";
 import { schemaWithPagination } from ".";
 
 export const MAX_DESCRIPTION_LENGTH = 3000;
+export const DEFAULT_GET_USERS_POSTS_TAKE = 10;
 const OVER_3MB_IN_CHARS = 4000000;
 
 export const addPostSchema = z.object({
@@ -10,6 +11,11 @@ export const addPostSchema = z.object({
   image: z.string().max(OVER_3MB_IN_CHARS).optional(),
   clubId: z.number(),
 });
+
+export const getUsersPostsSchema = schemaWithPagination(
+  z.object({ userId: z.string() }),
+  DEFAULT_GET_USERS_POSTS_TAKE,
+);
 
 export const getNewestPostsSchema = schemaWithPagination(
   z.object({

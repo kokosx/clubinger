@@ -24,7 +24,7 @@ const layout = async ({ children, params }: Props) => {
 
   if (!attends) redirect("/app");
 
-  return <LikedPostsProvider>{children}</LikedPostsProvider>;
+  return <>{children}</>;
 };
 
 export default layout;

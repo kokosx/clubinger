@@ -19,10 +19,11 @@ import { revalidatePathAction } from "../actions/revalidatePathAction";
 
 type Props = {
   postId: number;
+  clubId: number;
   isInitiallySaved: boolean;
 };
 
-const PostActions = ({ postId, isInitiallySaved }: Props) => {
+const PostActions = ({ postId, isInitiallySaved, clubId }: Props) => {
   const path = usePathname();
   const { addToHiddenPosts, removeFromHiddenPosts } = useContext(
     SavedPostVisibilityContext,
@@ -35,7 +36,7 @@ const PostActions = ({ postId, isInitiallySaved }: Props) => {
   };
 
   const [isSaved, setIsSaved] = useState(isInitiallySaved);
-  const { clubId }: { clubId: string } = useParams();
+
   const _savePost = api.post.savePost.useMutation({
     onSuccess: () => {
       toast("Zapisano", { icon: <SuccessToastIcon /> });
@@ -61,7 +62,7 @@ const PostActions = ({ postId, isInitiallySaved }: Props) => {
     if (isSaved) {
       _unsavePost.mutate({ postId });
     } else {
-      _savePost.mutate({ clubId: Number(clubId), postId });
+      _savePost.mutate({ clubId, postId });
     }
     if (path !== "/app/saved") {
       revalidatePathAction("/app/saved", "page");

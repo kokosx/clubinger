@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Navbar from "./Navbar";
 import { db } from "@/server/db";
 import SavedPostVisibilityProvider from "@/components/SavedPostVisibilityProvider";
+import LikedPostsProvider from "./club/[clubId]/LikedPostsProvider";
 
 type Props = PropsWithChildren & {};
 
@@ -20,9 +21,11 @@ const layout = async ({ children }: Props) => {
   return (
     <div className="container  mx-auto flex h-full min-h-screen flex-col  p-2 ">
       <Navbar session={session} clubs={attendedClubs.map((v) => v.club)} />
-      <SavedPostVisibilityProvider>
-        <main className="h-full min-h-full">{children}</main>
-      </SavedPostVisibilityProvider>
+      <LikedPostsProvider>
+        <SavedPostVisibilityProvider>
+          <main className="h-full min-h-full">{children}</main>
+        </SavedPostVisibilityProvider>
+      </LikedPostsProvider>
     </div>
   );
 };

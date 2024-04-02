@@ -58,6 +58,7 @@ const PostCard = ({ post }: Props) => {
             </button>
           </CardDescription>
           <PostActions
+            clubId={post.clubId}
             isInitiallySaved={post.saved.length > 0}
             postId={post.id}
           />

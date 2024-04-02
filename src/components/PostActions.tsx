@@ -9,11 +9,12 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { api } from "@/trpc/react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import SuccessToastIcon from "./SuccessToastIcon";
 import ErrorToastIcon from "./ErrorToastIcon";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { SavedPostVisibilityContext } from "./SavedPostVisibilityProvider";
 import { revalidatePathAction } from "../actions/revalidatePathAction";
 
 type Props = {
@@ -22,12 +23,24 @@ type Props = {
 };
 
 const PostActions = ({ postId, isInitiallySaved }: Props) => {
+  const path = usePathname();
+  const { addToHiddenPosts, removeFromHiddenPosts } = useContext(
+    SavedPostVisibilityContext,
+  );
+
+  const removeIfSavedPage = () => {
+    if (path === "/app/saved") {
+      addToHiddenPosts(postId);
+    }
+  };
+
   const [isSaved, setIsSaved] = useState(isInitiallySaved);
   const { clubId }: { clubId: string } = useParams();
   const _savePost = api.post.savePost.useMutation({
     onSuccess: () => {
       toast("Zapisano", { icon: <SuccessToastIcon /> });
       setIsSaved(true);
+      removeFromHiddenPosts(postId);
     },
     onError: () => {
       toast("Nie udało się zapisać", { icon: <ErrorToastIcon /> });
@@ -37,6 +50,7 @@ const PostActions = ({ postId, isInitiallySaved }: Props) => {
     onSuccess: () => {
       toast("Usunięto", { icon: <SuccessToastIcon /> });
       setIsSaved(false);
+      removeIfSavedPage();
     },
     onError: () => {
       toast("Coś poszło nie tak", { icon: <ErrorToastIcon /> });
@@ -45,11 +59,13 @@ const PostActions = ({ postId, isInitiallySaved }: Props) => {
 
   const save = () => {
     if (isSaved) {
-      _unsavePost.mutate({ clubId: Number(clubId), postId });
+      _unsavePost.mutate({ postId });
     } else {
       _savePost.mutate({ clubId: Number(clubId), postId });
     }
-    revalidatePathAction("/app/saved", "page");
+    if (path !== "/app/saved") {
+      revalidatePathAction("/app/saved", "page");
+    }
   };
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useContext } from "react";
 import {
   Card,
   CardContent,
@@ -15,6 +15,7 @@ import LikeButton from "@/components/LikeButton";
 import { PostOutputs } from "@/server/api/root";
 import DOMPurify from "isomorphic-dompurify";
 import PostActions from "@/components/PostActions";
+import { SavedPostVisibilityContext } from "../../../../components/SavedPostVisibilityProvider";
 
 type Props = {
   post: PostOutputs["getNewestPosts"]["items"][0];
@@ -22,6 +23,12 @@ type Props = {
 
 const PostCard = ({ post }: Props) => {
   const router = useRouter();
+
+  const { isPostVisible } = useContext(SavedPostVisibilityContext);
+
+  if (!isPostVisible(post.id)) {
+    return null;
+  }
 
   return (
     <Card

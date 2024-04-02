@@ -1,6 +1,5 @@
 import { db } from "@/server/db";
 import { getSession } from "../../../lib/auth/utils";
-import PostCard from "../club/[clubId]/PostCard";
 import BackButton from "@/components/BackButton";
 import { DEFAULT_GET_SAVED_POSTS_TAKE } from "../../../schemas/post";
 import SavedPosts from "./SavedPosts";

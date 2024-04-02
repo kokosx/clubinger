@@ -11,6 +11,7 @@ import {
   getMyPostsSchema,
   likePostSchema,
   savePostSchema,
+  unSavePostSchema,
 } from "../../../schemas/post";
 import { TRPCError } from "@trpc/server";
 
@@ -235,8 +236,8 @@ export const postRouter = createTRPCRouter({
         throw new TRPCError({ code: "BAD_REQUEST" });
       }
     }),
-  unsavePost: attendingUserProcedure
-    .input(savePostSchema)
+  unsavePost: authenticatedProcedure
+    .input(unSavePostSchema)
     .mutation(async ({ ctx, input }) => {
       try {
         await ctx.db.savedPost.deleteMany({

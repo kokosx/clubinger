@@ -43,3 +43,7 @@ export const savePostSchema = z.object({
   clubId: z.number(),
   postId: z.number(),
 });
+
+export const unSavePostSchema = z.object({
+  postId: z.number(),
+});

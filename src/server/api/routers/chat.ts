@@ -20,6 +20,9 @@ export const chatRouter = createTRPCRouter({
         select: {
           id: true,
         },
+        where: {
+          clubId: input.clubId,
+        },
       });
 
       return { id: room!.id };

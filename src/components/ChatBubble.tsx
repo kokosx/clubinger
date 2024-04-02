@@ -15,7 +15,7 @@ const ChatBubble = ({ message, userId }: Props) => {
 
   return (
     <div
-      className={`h-full w-2/3 min-w-36 max-w-fit ${isCreator ? "self-end bg-secondary text-black" : "text-white"} rounded-lg bg-primary p-1  dark:text-black`}
+      className={`max-h-min w-2/3 min-w-36 max-w-fit ${isCreator ? "self-end bg-secondary text-black" : "text-white"} rounded-lg bg-primary p-1  dark:text-black`}
     >
       <HoverCard>
         <HoverCardTrigger asChild>

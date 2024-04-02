@@ -1,15 +1,19 @@
 import { db } from "@/server/db";
 import { getSession } from "../../../lib/auth/utils";
-import PostCard from "../club/[clubId]/PostCard";
 import BackButton from "@/components/BackButton";
+import { DEFAULT_GET_MY_POSTS_TAKE } from "@/schemas/post";
+import MyPosts from "./MyPosts";
 
 const page = async () => {
   const session = await getSession();
-  const savedPosts = await db.post.findMany({
+  const posts = await db.post.findMany({
     where: {
       createdBy: session!.user.id,
     },
     include: {
+      likes: { where: { userId: session!.user.id } },
+      _count: { select: { likes: true, comments: true } },
+      saved: true,
       user: {
         select: {
           username: true,
@@ -18,12 +22,18 @@ const page = async () => {
           avatarUrl: true,
         },
       },
-      likes: { where: { userId: session!.user.id } },
-      saved: { where: { savedBy: session!.user.id } },
-      _count: { select: { likes: true, comments: true } },
     },
-    orderBy: { createdAt: "desc" },
+    take: DEFAULT_GET_MY_POSTS_TAKE + 1,
+    orderBy: { id: "desc" },
   });
+
+  let initialCursor = undefined;
+
+  if (posts[DEFAULT_GET_MY_POSTS_TAKE]) {
+    initialCursor = posts[DEFAULT_GET_MY_POSTS_TAKE].id;
+    posts.pop();
+  }
+
   return (
     <div className="flex flex-col gap-y-2">
       <span>
@@ -31,9 +41,7 @@ const page = async () => {
       </span>
 
       <h2 className="text-3xl font-semibold">Twoje posty</h2>
-      {savedPosts.map((post) => (
-        <PostCard key={post.id} post={post} />
-      ))}
+      <MyPosts posts={posts} initialCursor={initialCursor} />
     </div>
   );
 };

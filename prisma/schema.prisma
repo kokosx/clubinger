@@ -109,12 +109,16 @@ model Post {
 }
 
 model SavedPost {
+
+  id Int @id @default(autoincrement())
+
   savedBy String
   user User @relation(fields: [savedBy],references: [id],onUpdate: Cascade,onDelete: Cascade)
   postId Int
   post Post @relation(fields: [postId],references: [id],onUpdate: Cascade,onDelete: Cascade)
 
-  @@id([postId,savedBy])
+
+  @@unique([postId,savedBy])
 }
 
 model PostLike {

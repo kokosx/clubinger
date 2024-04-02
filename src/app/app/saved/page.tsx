@@ -2,32 +2,43 @@ import { db } from "@/server/db";
 import { getSession } from "../../../lib/auth/utils";
 import PostCard from "../club/[clubId]/PostCard";
 import BackButton from "@/components/BackButton";
+import { DEFAULT_GET_SAVED_POSTS_TAKE } from "../../../schemas/post";
+import SavedPosts from "./SavedPosts";
 
 const page = async () => {
   const session = await getSession();
-  const savedPosts = await db.post.findMany({
+  const savedPosts = await db.savedPost.findMany({
     where: {
-      saved: {
-        some: {
-          savedBy: session!.user.id,
-        },
-      },
+      savedBy: session!.user.id,
     },
     include: {
-      user: {
-        select: {
-          username: true,
-          id: true,
-          avatarMediaType: true,
-          avatarUrl: true,
+      post: {
+        include: {
+          user: {
+            select: {
+              username: true,
+              id: true,
+              avatarMediaType: true,
+              avatarUrl: true,
+            },
+          },
+          likes: { where: { userId: session!.user.id } },
+          saved: { where: { savedBy: session!.user.id } },
+          _count: { select: { likes: true, comments: true } },
         },
       },
-      likes: { where: { userId: session!.user.id } },
-      saved: { where: { savedBy: session!.user.id } },
-      _count: { select: { likes: true, comments: true } },
     },
-    orderBy: { createdAt: "desc" },
+    take: DEFAULT_GET_SAVED_POSTS_TAKE + 1,
+    orderBy: { id: "desc" },
   });
+
+  let nextCursor = undefined;
+
+  if (savedPosts[DEFAULT_GET_SAVED_POSTS_TAKE]) {
+    savedPosts.pop();
+    nextCursor = DEFAULT_GET_SAVED_POSTS_TAKE;
+  }
+
   return (
     <div className="flex flex-col gap-y-2">
       <span>
@@ -35,9 +46,10 @@ const page = async () => {
       </span>
 
       <h2 className="text-3xl font-semibold">Twoje zapisane posty</h2>
-      {savedPosts.map((post) => (
-        <PostCard key={post.id} post={post} />
-      ))}
+      <SavedPosts
+        posts={savedPosts.map((v) => v.post)}
+        initialCursor={nextCursor}
+      />
     </div>
   );
 };

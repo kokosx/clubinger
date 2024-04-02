@@ -6,9 +6,8 @@ import { api } from "@/trpc/react";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import ErrorToastIcon from "@/components/ErrorToastIcon";
-import { Card } from "@/components/ui/card";
-import { ReloadIcon } from "@radix-ui/react-icons";
 import { useOnScrollDown } from "@/lib/hooks/useOnScrollDown";
+import LoadingPostCard from "../../../../components/LoadingPostCard";
 
 type Props = {
   initialPosts: PostOutputs["getNewestPosts"]["items"];
@@ -67,13 +66,7 @@ const Posts = ({ initialPosts, clubId, initialCursor }: Props) => {
       {renderFetchedPosts().map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
-      {_getNewestPosts.isLoading ? (
-        <Card className="flex  h-48 w-full items-center justify-center">
-          <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-        </Card>
-      ) : (
-        <></>
-      )}
+      <LoadingPostCard loading={_getNewestPosts.isFetching} />
     </div>
   );
 };

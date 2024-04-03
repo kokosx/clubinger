@@ -9,7 +9,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import GenreChooser from "@/components/GenreChooser";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Loading from "@/components/Loading";
 import InputField from "@/components/InputField";
@@ -24,7 +24,6 @@ import { convertToSnakeCase } from "@/lib/format";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LoadingButton } from "@/components/LoadingButton";
 import { toast } from "sonner";
-import { revalidatePathAction } from "../../actions/revalidatePathAction";
 import { Textarea } from "../../components/ui/textarea";
 
 type Props = {
@@ -57,7 +56,6 @@ const CreateClubDialog = ({ children, visible }: Props) => {
       toast("Utworzono klub!");
       //@ts-expect-error Close the drawer after navigation
       document.querySelector("#drawer-close")!.click();
-      revalidatePathAction("/app", "layout");
       router.push(`/app/club/${club.id}?justCreated=true`);
     },
   });

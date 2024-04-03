@@ -10,11 +10,14 @@ type Props = {
   params: {
     clubId: string;
   };
+  searchParams: {
+    justCreated?: string;
+  };
 };
 
 type GetPostResult = PostOutputs["getNewestPosts"]["items"][0];
 
-const page = async ({ params }: Props) => {
+const page = async ({ params, searchParams }: Props) => {
   const session = await getSession();
 
   const posts: GetPostResult[] = await db.post.findMany({

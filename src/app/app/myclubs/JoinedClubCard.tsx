@@ -19,9 +19,10 @@ type Props = {
       userType: ClubParticipantType;
     }[];
   };
+  addToDeleted: (id: number) => void;
 };
 
-const JoinedClubCard = ({ club }: Props) => {
+const JoinedClubCard = ({ club, addToDeleted }: Props) => {
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
 
   const _leaveClub = api.club.leaveClub.useMutation({
@@ -29,8 +30,9 @@ const JoinedClubCard = ({ club }: Props) => {
       toast("Pomyślnie udało się odejść z klubu", {
         icon: <SuccessToastIcon />,
       });
-      revalidatePathAction("/", "layout");
+      revalidatePathAction("/app", "layout");
       setIsLeaveDialogOpen(false);
+      addToDeleted(club.id);
     },
     onError() {
       toast("Coś poszło nie tak!", { icon: <ErrorToastIcon /> });
@@ -43,8 +45,9 @@ const JoinedClubCard = ({ club }: Props) => {
       toast("Pomyślnie usunięto klub", {
         icon: <SuccessToastIcon />,
       });
-      revalidatePathAction("/", "layout");
+      revalidatePathAction("/app", "layout");
       setIsLeaveDialogOpen(false);
+      addToDeleted(club.id);
     },
     onError() {
       toast("Coś poszło nie tak!", { icon: <ErrorToastIcon /> });

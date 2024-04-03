@@ -16,7 +16,7 @@ export const addClubFormSchema = z.object({
   description: clubNameDescription,
 });
 
-export const DEFAULT_GET_JOINED_CLUBS_TAKE = 1;
+export const DEFAULT_GET_JOINED_CLUBS_TAKE = 20;
 
 export const getJoinedClubsSchema = schemaWithPagination(
   z.object({}),

@@ -15,8 +15,8 @@ import SuccessToastIcon from "@/components/SuccessToastIcon";
 import { useState } from "react";
 import ErrorToastIcon from "../../../components/ErrorToastIcon";
 import Link from "next/link";
-import { cn } from "../../../lib/utils";
-import { revalidatePathAction } from "../../../actions/revalidatePathAction";
+import { cn } from "@/lib/utils";
+import { revalidatePathAction } from "@/actions/revalidatePathAction";
 
 type Props = {
   club: RouterOutputs["club"]["getRecommendedClubs"][0];

@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle } from "../../../../components/ui/card";
 import PostCard from "../../club/[clubId]/PostCard";
 import { LockIcon } from "lucide-react";
 import { Separator } from "../../../../components/ui/separator";
-import { DEFAULT_GET_USERS_POSTS_TAKE } from "../../../../schemas/post";
+import { DEFAULT_USER_PROFILE_POST_TAKE } from "../../../../schemas/post";
 import UsersPosts from "./UsersPosts";
 
 type Props = {
@@ -28,7 +28,7 @@ const page = async ({ params }: Props) => {
         orderBy: {
           id: "desc",
         },
-        take: DEFAULT_GET_USERS_POSTS_TAKE + 1,
+        take: DEFAULT_USER_PROFILE_POST_TAKE + 1,
         where: {
           club: {
             participants: {
@@ -55,7 +55,7 @@ const page = async ({ params }: Props) => {
     },
   });
 
-  const initialCursor = user?.createdPosts[DEFAULT_GET_USERS_POSTS_TAKE]?.id;
+  const initialCursor = user?.createdPosts[DEFAULT_USER_PROFILE_POST_TAKE]?.id;
   if (initialCursor) {
     user.createdPosts.pop();
   }

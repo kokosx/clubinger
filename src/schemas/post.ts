@@ -3,6 +3,7 @@ import { schemaWithPagination } from ".";
 
 export const MAX_DESCRIPTION_LENGTH = 3000;
 export const DEFAULT_GET_MY_POSTS_TAKE = 15;
+export const DEFAULT_USER_PROFILE_POST_TAKE = 15;
 export const DEFAULT_GET_SAVED_POSTS_TAKE = 15;
 const OVER_3MB_IN_CHARS = 4000000;
 
@@ -16,6 +17,13 @@ export const addPostSchema = z.object({
 export const getMyPostsSchema = schemaWithPagination(
   z.object({}),
   DEFAULT_GET_MY_POSTS_TAKE,
+);
+
+export const getUsersPostsSchema = schemaWithPagination(
+  z.object({
+    userId: z.string(),
+  }),
+  DEFAULT_USER_PROFILE_POST_TAKE,
 );
 
 export const getSavedPostsSchema = schemaWithPagination(

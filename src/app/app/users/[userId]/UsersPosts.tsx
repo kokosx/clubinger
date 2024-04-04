@@ -3,7 +3,11 @@
 import { PostOutputs } from "@/server/api/root";
 import PostCard from "../../club/[clubId]/PostCard";
 import { api } from "@/trpc/react";
-import { useOnScrollDown } from "../../../../lib/hooks/useOnScrollDown";
+import { useOnScrollDown } from "@/lib/hooks/useOnScrollDown";
+import LoadingPostCard from "@/components/LoadingPostCard";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import ErrorToastIcon from "@/components/ErrorToastIcon";
 
 type Props = {
   initialPosts: PostOutputs["getUsersPosts"]["items"];
@@ -33,21 +37,18 @@ const UsersPosts = ({ initialPosts, userId, initialCursor }: Props) => {
 
   useOnScrollDown(refetchPosts);
 
-  const getRenderItems = () => {
-    const toRender: PostOutputs["getUsersPosts"]["items"] = [];
-    _getUsersPosts.data?.pages.forEach((page) => {
-      page.items.forEach((item) => {
-        toRender.push(item);
-      });
+  useEffect(() => {
+    toast("Wystąpił błąd", {
+      icon: <ErrorToastIcon />,
     });
-    return toRender;
-  };
+  }, [_getUsersPosts.isError]);
 
   return (
     <>
-      {getRenderItems().map((post) => (
-        <PostCard post={post} />
-      ))}
+      {_getUsersPosts.data?.pages.map((page) =>
+        page.items.map((post) => <PostCard key={post.id} post={post} />),
+      )}
+      <LoadingPostCard loading={_getUsersPosts.isFetching} />
     </>
   );
 };

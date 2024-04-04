@@ -12,6 +12,8 @@ import {
   likePostSchema,
   savePostSchema,
   unSavePostSchema,
+  getUsersPostsSchema,
+  DEFAULT_USER_PROFILE_POST_TAKE,
 } from "../../../schemas/post";
 import { TRPCError } from "@trpc/server";
 
@@ -184,6 +186,56 @@ export const postRouter = createTRPCRouter({
         });
       } catch (error) {
         console.log(error);
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
+    }),
+  getUsersPosts: authenticatedProcedure
+    .input(getUsersPostsSchema)
+    .query(async ({ ctx, input }) => {
+      try {
+        const user = await ctx.db.user.findFirst({
+          where: {
+            id: input.userId,
+          },
+
+          include: {
+            createdPosts: {
+              cursor: input.cursor ? { id: input.cursor } : undefined,
+              orderBy: {
+                id: "desc",
+              },
+              take: DEFAULT_USER_PROFILE_POST_TAKE + 1,
+              where: {
+                club: {
+                  participants: {
+                    some: {
+                      userId: ctx.user.id,
+                    },
+                  },
+                },
+              },
+              include: {
+                user: {
+                  select: {
+                    username: true,
+                    id: true,
+                    avatarMediaType: true,
+                    avatarUrl: true,
+                  },
+                },
+                likes: { where: { userId: ctx.user.id } },
+                _count: { select: { likes: true, comments: true } },
+                saved: true,
+              },
+            },
+          },
+        });
+        return sendPagination({
+          items: user!.createdPosts,
+          cursor: input.cursor,
+          limit: input.limit,
+        });
+      } catch (error) {
         throw new TRPCError({ code: "BAD_REQUEST" });
       }
     }),

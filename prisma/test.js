@@ -8,7 +8,7 @@ const main = async () => {
       .fill(0)
       .map((_, i) => ({
         createdBy: "zqyfco21f3lzi5r",
-        clubId: 7,
+        clubId: 14,
         title: `${i}`,
       })),
   });

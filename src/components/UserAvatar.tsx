@@ -1,4 +1,4 @@
-import { openPeeps } from "@dicebear/collection";
+import * as openPeeps from "@dicebear/open-peeps";
 import { createAvatar } from "@dicebear/core";
 import type { AvatarMediaType } from "@prisma/client";
 import Image from "next/image";

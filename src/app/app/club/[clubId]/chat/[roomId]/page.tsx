@@ -2,6 +2,8 @@ import ChatBox from "./ChatBox";
 
 import { db } from "@/server/db";
 import { getSession } from "@/lib/auth/utils";
+import { NewClubMessage } from "@/lib/pusher/client";
+import { DEFAULT_GET_CHAT_MESSAGES_TAKE } from "../../../../../../schemas/chat";
 
 type Props = {
   params: {
@@ -13,14 +15,14 @@ type Props = {
 const page = async ({ params }: Props) => {
   const session = await getSession();
 
-  const messages = await db.chatMessage.findMany({
+  const messages: NewClubMessage[] = await db.chatMessage.findMany({
     where: {
       roomId: Number(params.roomId),
     },
     orderBy: {
-      createdAt: "desc",
+      id: "desc",
     },
-    take: 10,
+    take: DEFAULT_GET_CHAT_MESSAGES_TAKE + 1,
     select: {
       id: true,
       message: true,
@@ -35,8 +37,14 @@ const page = async ({ params }: Props) => {
     },
   });
 
+  const initialCursor = messages[DEFAULT_GET_CHAT_MESSAGES_TAKE]?.id;
+  if (initialCursor) {
+    messages.pop();
+  }
+
   return (
     <ChatBox
+      initialCursor={initialCursor}
       initialMessages={messages}
       roomId={Number(params.roomId)}
       user={session!.user}

@@ -22,22 +22,46 @@ import InputError from "@/components/InputError";
 import { SendHorizonal } from "lucide-react";
 import ChatBubble from "@/components/ChatBubble";
 import { AuthUser } from "../../../../../../lib/auth/auth";
-import LoadingChatBubble from "./LoadingChatBubble";
+import useElementOnScreen from "./useChatScroll";
+import { useInterval } from "usehooks-ts";
 
 type Props = {
   clubId: number;
   roomId: number;
   initialMessages: NewClubMessage[];
   user: AuthUser;
+  initialCursor?: number;
 };
 
 const formSchema = z.object({
   message: chatMessageSchema,
 });
-
-const ChatBox = ({ clubId, roomId, initialMessages, user }: Props) => {
+//FIXME: Fix this terrible code
+const ChatBox = ({
+  clubId,
+  roomId,
+  initialMessages,
+  user,
+  initialCursor,
+}: Props) => {
+  const [newMessages, setNewMessages] = useState<NewClubMessage[]>([]);
   const _sendMessage = api.chat.sendClubMessage.useMutation({});
-  const [messages, setMessages] = useState<NewClubMessage[]>([]);
+  const _getChatMessages = api.chat.getChatMessages.useInfiniteQuery(
+    { clubId, roomId },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      initialCursor,
+      initialData: {
+        pages: [
+          {
+            items: initialMessages,
+            nextCursor: initialCursor,
+          },
+        ],
+        pageParams: [],
+      },
+    },
+  );
   const {
     register,
     handleSubmit,
@@ -57,9 +81,43 @@ const ChatBox = ({ clubId, roomId, initialMessages, user }: Props) => {
     const channel = pusher.subscribe(clubChannel(clubId));
 
     channel.bind(newMessageEvent, (data: NewClubMessage) => {
-      setMessages((p) => [data, ...p]);
+      setNewMessages((p) => [data, ...p]);
     });
   }, []);
+
+  const [isOnCooldown, setIsOnCooldown] = useState(false);
+  const [lastElement, setLastElement] = useState(null);
+
+  useEffect(() => {
+    const newChild = document.querySelector("#chatbox")?.lastChild;
+
+    //@ts-expect-error
+    setLastElement(newChild);
+  }, [_getChatMessages.data]);
+
+  useInterval(
+    () => {
+      setIsOnCooldown(false);
+    },
+    isOnCooldown ? 100 : null,
+  );
+
+  useEffect(() => {
+    setIsOnCooldown(true);
+  }, [_getChatMessages.data]);
+
+  const fetchNextPage = () => {
+    if (initialCursor && !isOnCooldown) {
+      _getChatMessages.fetchNextPage();
+      setIsOnCooldown(true);
+    }
+  };
+
+  useElementOnScreen(
+    //@ts-expect-error
+    lastElement,
+    fetchNextPage,
+  );
 
   const onSubmit = handleSubmit(({ message }) => {
     _sendMessage.mutate({ message, roomId, clubId, optimisticId });
@@ -73,12 +131,18 @@ const ChatBox = ({ clubId, roomId, initialMessages, user }: Props) => {
         className=" flex h-[calc(100vh-240px)] w-full flex-col-reverse gap-y-1 overflow-y-scroll "
       >
         {/* TODO: Check for solution with reversal */}
-        {messages.map((message) => (
+        {newMessages.map((message) => (
           <ChatBubble message={message} userId={user.id} key={message.id} />
         ))}
-        {initialMessages.map((message) => (
-          <ChatBubble message={message} userId={user.id} key={message.id} />
-        ))}
+        {_getChatMessages.data?.pages.map((page, i) => {
+          const isLastPage = _getChatMessages.data.pages.length - 1 === i;
+          return page.items.map((message, i) => {
+            const isLastMessage = page.items.length - 1 === i;
+            return (
+              <ChatBubble message={message} userId={user.id} key={message.id} />
+            );
+          });
+        })}
       </div>
       <form onSubmit={onSubmit}>
         <Label htmlFor="message">Twoja wiadomość</Label>

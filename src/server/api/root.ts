@@ -30,6 +30,7 @@ export type AppRouter = typeof appRouter;
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 export type PostOutputs = RouterOutputs["post"];
 export type ClubOutputs = RouterOutputs["club"];
+export type CommentOutputs = RouterOutputs["comment"];
 
 // const createCaller = createCallerFactory();
 // export const serverCaller = createCaller(appRouter)(await createContext());

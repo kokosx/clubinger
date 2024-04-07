@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build --no-lint",
+    "build": "rm -rf ./node_modules/@dicebear/core/node_modules/sharp/build/Release/sharp-linux-x64.node && next build --no-lint",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "dev": "next dev",

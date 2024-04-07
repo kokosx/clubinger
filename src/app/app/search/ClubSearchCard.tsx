@@ -24,8 +24,6 @@ type Props = {
 const ClubSearchCard = ({ club }: Props) => {
   const [didJoin, setDidJoin] = useState(club.participants.length > 0);
 
-  const { clubId }: { clubId: string } = useParams();
-
   const _joinClub = api.club.joinClub.useMutation({
     async onSuccess() {
       toast("Dołączono pomyślnie!", { icon: <SuccessToastIcon /> });
@@ -37,7 +35,7 @@ const ClubSearchCard = ({ club }: Props) => {
   });
 
   const joinClub = () => {
-    _joinClub.mutate({ clubId: Number(clubId) });
+    _joinClub.mutate({ clubId: club.id });
   };
 
   return (

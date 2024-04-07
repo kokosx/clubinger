@@ -20,9 +20,6 @@ export const auth = lucia({
   sessionCookie: {
     expires: false,
     name: "__session",
-    attributes: {
-      domain: "clubinger.vercel.app",
-    },
   },
   getUserAttributes: (data) => {
     return data;

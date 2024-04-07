@@ -17,7 +17,13 @@ export const auth = lucia({
   }),
   env: env.NODE_ENV === "development" ? "DEV" : "PROD",
   middleware: nextjs_future(),
-  sessionCookie: { expires: false, name: "__session" },
+  sessionCookie: {
+    expires: false,
+    name: "__session",
+    attributes: {
+      domain: "clubinger.vercel.app",
+    },
+  },
   getUserAttributes: (data) => {
     return data;
   },

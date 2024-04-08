@@ -180,6 +180,11 @@ const Navbar = ({ session, clubs }: Props) => {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
+                <Link className="w-full" href={`/app/settings`}>
+                  Ustawienia
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
                 <button
                   className="flex w-full items-center gap-x-1"
                   onClick={() => _logout.mutate()}

@@ -22,3 +22,8 @@ export const signinSchema = z.object({
   email: z.string().email().max(255),
   password: z.string().min(5).max(150),
 });
+
+export const updateProfileSchema = z.object({
+  newAvatarUrl: z.string().min(5).max(200),
+  newDescription: z.string().max(200).default(""),
+});

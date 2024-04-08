@@ -81,7 +81,7 @@ const ChatBox = ({
     const channel = pusher.subscribe(clubChannel(clubId));
 
     channel.bind(newMessageEvent, (data: NewClubMessage) => {
-      setNewMessages((p) => [data, ...p]);
+      if (data.user.id !== user.id) setNewMessages((p) => [data, ...p]);
     });
   }, []);
 

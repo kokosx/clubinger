@@ -8,36 +8,51 @@ import InputError from "@/components/InputError";
 import { Button } from "@/components/ui/button";
 import { simpleSearchSchema } from "@/schemas/search";
 import { api } from "../../../trpc/react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import ClubSearchCard from "./ClubSearchCard";
 import { SearchIcon } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 type Form = typeof simpleSearchSchema._output;
 
 const SearchForm = () => {
+  const searchParams = useSearchParams();
+
   const {
     formState: { errors },
-    register,
     handleSubmit,
     setValue,
     getValues,
-  } = useForm<Form>({ resolver: zodResolver(simpleSearchSchema) });
-  //FIXME: To be fixed so that it doesnt need to be used, should use form values instead
-  const [value, _setValue] = useState("");
-  //FIXME: Fix this:3
+  } = useForm<Form>({
+    resolver: zodResolver(simpleSearchSchema),
+    defaultValues: {
+      value: searchParams.get("value") || "",
+    },
+  });
+  //FIXME: Doesnt work without dummy rerender state because react-hook-form doesnt rerender on formState change
+  const [dummy, setDummy] = useState(1);
+  const [shouldBeEnabled, setShouldBeEnabled] = useState(!!getValues("value"));
+
+  //Disable auto refetching after initial fetch, am i stupid?
+  useEffect(() => {
+    if (shouldBeEnabled) {
+      setShouldBeEnabled(false);
+    }
+  }, [shouldBeEnabled]);
+
   const _searchClubs = api.club.search.useQuery(
-    { value },
+    { value: getValues("value") },
     {
-      enabled: false,
-      cacheTime: 0,
-      staleTime: 0,
+      enabled: shouldBeEnabled,
     },
   );
 
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = handleSubmit(({ value }) => {
     _searchClubs.refetch();
-  };
+    //@ts-expect-error it works :3
+    const url = new URL(window.location);
+    history.pushState(null, "", `?value=${value}`);
+  });
 
   return (
     <>
@@ -48,7 +63,7 @@ const SearchForm = () => {
               value={getValues("value")}
               onChange={(e) => {
                 setValue("value", e.target.value);
-                _setValue(e.target.value);
+                setDummy((p) => p + 1);
               }}
             />
             <InputError error={errors.value?.message} />
@@ -63,6 +78,9 @@ const SearchForm = () => {
         {_searchClubs.data?.map((club) => (
           <ClubSearchCard club={club} key={club.id} />
         ))}
+        {_searchClubs.data?.length === 0 && (
+          <p className="text-center">Brak wyników</p>
+        )}
       </div>
     </>
   );

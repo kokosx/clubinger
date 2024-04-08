@@ -132,6 +132,9 @@ const Navbar = ({ session, clubs }: Props) => {
                     Utwórz klub
                   </DropdownMenuItem>
                 </DrawerTrigger>
+                <Link href="/app/search">
+                  <DropdownMenuItem>Szukaj</DropdownMenuItem>
+                </Link>
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>

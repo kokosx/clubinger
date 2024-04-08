@@ -21,9 +21,11 @@ import InputField from "@/components/InputField";
 import InputError from "@/components/InputError";
 import { SendHorizonal } from "lucide-react";
 import ChatBubble from "@/components/ChatBubble";
-import { AuthUser } from "../../../../../../lib/auth/auth";
+import { AuthUser } from "@/lib/auth/auth";
 import useElementOnScreen from "./useChatScroll";
 import { useInterval } from "usehooks-ts";
+import ErrorToastIcon from "@/components/ErrorToastIcon";
+import { toast } from "sonner";
 
 type Props = {
   clubId: number;
@@ -45,7 +47,14 @@ const ChatBox = ({
   initialCursor,
 }: Props) => {
   const [newMessages, setNewMessages] = useState<NewClubMessage[]>([]);
-  const _sendMessage = api.chat.sendClubMessage.useMutation({});
+  const _sendMessage = api.chat.sendClubMessage.useMutation({
+    async onSuccess({ msg }) {
+      addMessage(msg);
+    },
+    onError() {
+      toast("Wystąpił błąd", { icon: <ErrorToastIcon /> });
+    },
+  });
   const _getChatMessages = api.chat.getChatMessages.useInfiniteQuery(
     { clubId, roomId },
     {
@@ -71,6 +80,10 @@ const ChatBox = ({
     resolver: zodResolver(formSchema),
   });
 
+  const addMessage = (message: NewClubMessage) => {
+    setNewMessages((p) => [message, ...p]);
+  };
+
   let optimisticId = 0;
 
   useEffect(() => {
@@ -81,7 +94,7 @@ const ChatBox = ({
     const channel = pusher.subscribe(clubChannel(clubId));
 
     channel.bind(newMessageEvent, (data: NewClubMessage) => {
-      if (data.user.id !== user.id) setNewMessages((p) => [data, ...p]);
+      if (data.user.id !== user.id) addMessage(data);
     });
   }, []);
 

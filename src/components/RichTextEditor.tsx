@@ -14,7 +14,7 @@ const RichTextEditor = ({ setValue }: Props) => {
     editorProps: {
       attributes: {
         class:
-          "prose min-h-[400px] border-2 p-2 rounded-md border-secondary dark:prose-invert prose-sm sm:prose outline-none lg:prose-lg xl:prose-2xl",
+          "prose min-h-[400px] [&_ol]:list-decimal [&_ul]:list-disc border-2 p-2 rounded-md border-secondary dark:prose-invert prose-sm sm:prose outline-none lg:prose-lg xl:prose-2xl",
       },
     },
     extensions: [

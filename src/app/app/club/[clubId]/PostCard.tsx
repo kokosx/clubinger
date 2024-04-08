@@ -68,7 +68,7 @@ const PostCard = ({ post }: Props) => {
       </CardHeader>
       <CardContent className="m-0 ">
         <div
-          className="tiptap  p-0"
+          className="tiptap  mb-2 max-h-[200px] overflow-hidden p-0"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(post.description),
           }}

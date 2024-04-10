@@ -14,9 +14,9 @@ export const env = createEnv({
       .default("development"),
     PUSHER_APP_ID: z.string(),
     PUSHER_SECRET: z.string(),
-    CLOUDINARY_NAME: z.string(),
-    CLOUDINARY_API_KEY: z.string(),
-    CLOUDINARY_API_SECRET: z.string(),
+    // CLOUDINARY_NAME: z.string(),
+    // CLOUDINARY_API_KEY: z.string(),
+    // CLOUDINARY_API_SECRET: z.string(),
   },
 
   /**
@@ -41,9 +41,9 @@ export const env = createEnv({
     NEXT_PUBLIC_PUSHER_CLUSTER: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
     NEXT_PUBLIC_PUSHER_KEY: process.env.NEXT_PUBLIC_PUSHER_KEY,
     PUSHER_SECRET: process.env.PUSHER_SECRET,
-    CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
-    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
-    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+    // CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
+    // CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+    // CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

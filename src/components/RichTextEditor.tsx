@@ -17,19 +17,7 @@ const RichTextEditor = ({ setValue }: Props) => {
           "prose min-h-[400px] [&_ol]:list-decimal [&_ul]:list-disc border-2 p-2 rounded-md border-secondary dark:prose-invert prose-sm sm:prose outline-none lg:prose-lg xl:prose-2xl",
       },
     },
-    extensions: [
-      TextStyle,
-      StarterKit.configure({
-        bulletList: {
-          keepMarks: true,
-          keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-        },
-        orderedList: {
-          keepMarks: true,
-          keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-        },
-      }),
-    ],
+    extensions: [TextStyle, StarterKit.configure({})],
   });
 
   editor?.on("update", (e) => {

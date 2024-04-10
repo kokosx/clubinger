@@ -3,7 +3,6 @@ import { getSession } from "../../../../lib/auth/utils";
 import { db } from "../../../../server/db";
 import UserAvatar from "../../../../components/UserAvatar";
 import { Card, CardHeader, CardTitle } from "../../../../components/ui/card";
-import PostCard from "../../club/[clubId]/PostCard";
 import { LockIcon } from "lucide-react";
 import { Separator } from "../../../../components/ui/separator";
 import { DEFAULT_USER_PROFILE_POST_TAKE } from "../../../../schemas/post";

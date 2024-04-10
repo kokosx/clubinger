@@ -167,11 +167,11 @@ const Navbar = ({ session, clubs }: Props) => {
                   Moje posty
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 <Link className="w-full" href={`/app/mycomments`}>
                   Moje komentarze
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem>
                 <Link className="w-full" href={`/app/myclubs`}>
                   Moje kluby

@@ -38,9 +38,11 @@ const UsersPosts = ({ initialPosts, userId, initialCursor }: Props) => {
   useOnScrollDown(refetchPosts);
 
   useEffect(() => {
-    toast("Wystąpił błąd", {
-      icon: <ErrorToastIcon />,
-    });
+    if (_getUsersPosts.isError) {
+      toast("Wystąpił błąd", {
+        icon: <ErrorToastIcon />,
+      });
+    }
   }, [_getUsersPosts.isError]);
 
   return (

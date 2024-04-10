@@ -87,39 +87,11 @@ const RichTextEditorMenubar = ({ editor }: { editor: Editor | null }) => {
 
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={btnClassName("bulletList")}
-      >
-        <ListIcon />
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={btnClassName("orderedList")}
-      >
-        <ListIcon />
-      </button>
-      <button
-        type="button"
         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         className={btnClassName("codeBlock")}
       >
         <CodeIcon />
       </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        className={btnClassName("blockquote")}
-      >
-        <QuoteIcon />
-      </button>
-      <Button
-        type="button"
-        variant={"secondary"}
-        onClick={() => editor.chain().focus().setHorizontalRule().run()}
-      >
-        <SeparatorHorizontalIcon />
-      </Button>
 
       <Button
         type="button"

@@ -93,6 +93,7 @@ const page = async ({ params }: Props) => {
           {post._count.comments > -1 && (
             <Suspense fallback={<p>LOADING</p>}>
               <CommentsLoader
+                //@ts-expect-error FIXME: TEMPORARY
                 user={session.user}
                 postId={Number(params.postid)}
               />
@@ -141,6 +142,6 @@ const CommentsLoader = async ({ postId, user }: CommentsProps) => {
 
     orderBy: { createdAt: "desc" },
   });
-
+  //@ts-expect-error FIXME: TEMPORARY
   return <Comments user={user} comments={comments} />;
 };

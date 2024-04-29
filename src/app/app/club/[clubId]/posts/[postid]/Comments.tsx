@@ -18,10 +18,12 @@ const Comments = ({ comments }: Props) => {
       {ctx.newComments.map((comment) => (
         <Comment
           key={comment.id}
+          //@ts-expect-error FIXME: TEMPORARY
           comment={{ ...comment, _count: { likes: 0 }, likes: [], replies: [] }}
         />
       ))}
       {comments.map((comment) => (
+        //@ts-expect-error FIXME: TEMPORARY
         <Comment key={comment.id} comment={comment} />
       ))}
     </div>

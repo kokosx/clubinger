@@ -11,6 +11,9 @@ import Comment from "./Comment";
 import NewCommentProvider from "./NewCommentProvider";
 import Comments from "./Comments";
 import { PostComment, PostCommentLike, PostCommentReply } from "@prisma/client";
+import Link from "next/link";
+import UserAvatar from "../../../../../../components/UserAvatar";
+import { User } from "lucia";
 
 type Props = {
   params: {
@@ -45,7 +48,22 @@ const page = async ({ params }: Props) => {
   return (
     <div>
       <BackButton />
+
       <h2 className="text-3xl font-semibold">{post.title}</h2>
+      <div>
+        <Link href={`/users/${post.user.id}`}>
+          Utworzone przez{" "}
+          <button className="text-primary underline">
+            {post.user.username}
+            <UserAvatar
+              className="inline"
+              avatarUrl={post.user.avatarUrl}
+              mediaType={post.user.avatarMediaType}
+            />
+          </button>
+        </Link>
+      </div>
+
       <div
         className="tiptap"
         dangerouslySetInnerHTML={{
@@ -75,7 +93,7 @@ const page = async ({ params }: Props) => {
           {post._count.comments > -1 && (
             <Suspense fallback={<p>LOADING</p>}>
               <CommentsLoader
-                userId={session!.user.id}
+                user={session.user}
                 postId={Number(params.postid)}
               />
             </Suspense>
@@ -98,20 +116,25 @@ export type DisplayComment = PostComment & {
 
 type CommentsProps = {
   postId: number;
-  userId: string;
+  user: User;
 };
 
-const CommentsLoader = async ({ postId, userId }: CommentsProps) => {
+const CommentsLoader = async ({ postId, user }: CommentsProps) => {
   //TODO: Add scroll pagination
   const comments = await db.postComment.findMany({
     where: { postId },
     include: {
-      replies: true,
+      user: true,
+      replies: {
+        include: {
+          user: true,
+        },
+      },
 
       _count: { select: { likes: true } },
       likes: {
         where: {
-          userId,
+          userId: user.id,
         },
       },
     },
@@ -119,5 +142,5 @@ const CommentsLoader = async ({ postId, userId }: CommentsProps) => {
     orderBy: { createdAt: "desc" },
   });
 
-  return <Comments comments={comments} />;
+  return <Comments user={user} comments={comments} />;
 };

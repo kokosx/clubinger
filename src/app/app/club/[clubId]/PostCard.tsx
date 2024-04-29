@@ -33,7 +33,7 @@ const PostCard = ({ post }: Props) => {
   return (
     <Card
       onClick={() => router.push(`/app/club/${post.clubId}/posts/${post.id}`)}
-      className="hover:cursor-pointer"
+      className="max-h-[200px] overflow-hidden hover:cursor-pointer"
     >
       <CardHeader className="py-1 pt-3">
         <div className="flex justify-between">
@@ -68,7 +68,7 @@ const PostCard = ({ post }: Props) => {
       </CardHeader>
       <CardContent className="m-0 ">
         <div
-          className="tiptap  mb-2 max-h-[200px] overflow-hidden p-0"
+          className="tiptap mb-2 overflow-hidden p-0"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(post.description),
           }}

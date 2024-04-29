@@ -43,6 +43,7 @@ const AddReply = ({ addNewReply, clubId, commentId }: Props) => {
     onSuccess: ({ data }) => {
       reset();
       addNewReply(data);
+
       toast("Pomyślnie dodano odpowiedź");
     },
     onError: () => {

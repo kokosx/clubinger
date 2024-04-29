@@ -16,6 +16,7 @@ import AddReply from "./AddReply";
 import { useParams } from "next/navigation";
 import Reply from "./Reply";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { User } from "lucia";
 
 type Props = {
   comment: PostComment & {
@@ -24,15 +25,18 @@ type Props = {
       likes: number;
     };
     likes: PostCommentLike[];
+    user: User;
   };
+  user: User;
 };
 
-const Comment = ({ comment }: Props) => {
+const Comment = ({ comment, user }: Props) => {
   const [isAnswerOpen, setIsAnswerOpen] = useState(false);
   const [newReplies, setNewReplies] = useState<PostCommentReply[]>([]);
   const [repliesShown, setRepliesShown] = useState(false);
 
   const addNewReply = (newReply: PostCommentReply) => {
+    console.log(newReply);
     setNewReplies((p) => [newReply, ...p]);
     setIsAnswerOpen(false);
   };
@@ -44,9 +48,9 @@ const Comment = ({ comment }: Props) => {
         <Card key={comment.id} className="min-h-28 w-full md:max-w-[60%]">
           <CardHeader className="block  w-full justify-center gap-x-2">
             <CardDescription className="flex items-center gap-x-2">
-              <span>{comment.createdBy}</span>
+              <span>{comment.user.username}</span>
               <UserAvatar
-                avatarUrl={comment.createdBy}
+                avatarUrl={comment.user.avatarUrl}
                 mediaType={"DICEBEAR"}
               />
             </CardDescription>
@@ -89,9 +93,12 @@ const Comment = ({ comment }: Props) => {
           />
         )}
 
-        {repliesShown && newReplies.map((r) => <Reply key={r.id} reply={r} />)}
         {repliesShown &&
-          comment.replies.map((r) => <Reply key={r.id} reply={r} />)}
+          //@ts-expect-error FIXME: TEMPORARY
+          newReplies.map((r) => <Reply key={r.id} reply={{ data: r }} />)}
+        {repliesShown &&
+          //@ts-expect-error FIXME: TEMPORARY
+          comment.replies.map((r) => <Reply key={r.id} reply={{ data: r }} />)}
       </div>
     </div>
   );

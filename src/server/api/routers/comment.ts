@@ -13,6 +13,7 @@ export const commentRouter = createTRPCRouter({
             postId: input.parentId,
             createdBy: ctx.user.id,
           },
+          include: { user: true },
         });
         return { data: comment };
       } catch (error) {
@@ -28,6 +29,9 @@ export const commentRouter = createTRPCRouter({
             message: input.message,
             postCommentId: input.parentId,
             createdBy: ctx.user.id,
+          },
+          include: {
+            user: true,
           },
         });
         return { data: comment };
